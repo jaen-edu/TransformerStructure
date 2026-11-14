@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>11교시 - 어순이 교차한다 - 가이드북</title><style>body{max-width:880px;margin:26px auto;padding:0 18px;font:17px/1.55 'Malgun Gothic',sans-serif;color:#172d43}h1,h2,h3{line-height:1.3;margin:.65em 0 .35em}p{margin:.45em 0}a{color:#13568b}table{width:100%;border-collapse:collapse;margin:.45em 0 .7em}th,td{border:1px solid #8090a0;text-align:center;padding:.38em}thead th,.help{background:#edf2f7}caption{text-align:left;font-weight:bold}section{margin-bottom:1.15em}img{display:block;width:min(100%,560px);max-height:240px;object-fit:contain;margin:auto}.help{padding:.5em .75em}.field{display:block;min-height:2.35em;border-bottom:1px solid #8090a0}.filled{color:#174c67;font-weight:bold}.rotation-work th:first-child{width:30%}.rotation-work tbody tr:nth-child(2) .field{min-height:4.5em}.page-no{margin-top:1em;text-align:right;font-size:.85em}code{font-size:1em}nav{display:flex;gap:.85em;flex-wrap:wrap}.answer{border-top:1px solid #8090a0;margin-top:1.5em;padding-top:.7em}@page{size:A4;margin:15mm}@media print{body{margin:0;padding:0;font-size:11pt;line-height:1.4}nav{display:none}.sheet+.sheet{break-before:page}h1,h2,h3,caption{break-after:avoid}tr{break-inside:avoid}.guide section+section{break-before:page}.guide img{max-height:58mm}}.alignment{display:block;width:100%;max-width:700px;margin:.35em auto;border:1px solid #aab8c3;border-radius:4px}.wide .field{min-height:3.45em;background:linear-gradient(transparent 48%,#8090a0 48%,#8090a0 50%,transparent 50%)}.sheet table{table-layout:fixed}@media print{.sheet{font-size:10.5pt;line-height:1.34}.sheet h2{margin:.42em 0 .24em}.sheet p{margin:.29em 0}.sheet th,.sheet td{padding:.18em .3em}.sheet td .field{min-height:1.45em}.sheet table{margin:.28em 0 .43em}.alignment{width:162mm;break-inside:avoid}#practice{break-before:page}}@media print{nav{display:none}h2,h3{break-after:avoid}.start-print-page{break-before:page}#practice{break-before:auto!important}}@media print{}@media print{body{font-size:10.5pt;line-height:1.32}.alignment{max-width:150mm}}@media print{#practice{break-before:page!important}}</style></head><body class="guide">
+<main class="guide"><h1>11교시 - 어순이 교차한다 - 가이드북</h1><nav aria-label="목차"><a href="#start">학습 목표</a> · <a href="#concept">중요 개념</a> · <a href="#why">왜 하나요?</a> · <a href="#steps">무엇을 하나요?</a> · <a href="#example">손계산 예제</a> · <a href="#model">원논문의 Transformer에서는 어떻게 하나요?</a> · <a href="#practice">워크시트 실습</a> · <a href="#review">풀이 확인</a> · <a href="#next">다음 교시 연결</a></nav><section>
+<h2 id="start">학습 목표</h2>
+<p>어텐션 가중치 표에서 번역 토큰마다 가장 많이 참고한 원문 위치를 찾습니다. 그 위치를 선으로 잇고, 어느 두 선의 순서가 뒤집혔는지 설명할 수 있습니다.</p>
+<h2 id="concept">중요 개념</h2>
+<p>가중치 표는 <strong>가로 한 줄씩</strong> 읽습니다. 왼쪽의 행 이름은 지금 보는 번역 토큰이고, 위쪽의 열 이름은 그 토큰이 참고하는 원문 위치입니다. 가중치는 원문 정보를 얼마나 반영했는지 나타내는 비율입니다. 한 행에서 0.60이 가장 크고 원문 2번 열에 있다면, <strong>최댓값은 0.60</strong>이고 <strong>그 값이 있는 위치는 원문 2번</strong>입니다. 선은 원문 2번 점에 잇습니다.</p>
+<h2 id="why">왜 하나요?</h2>
+<p>원문과 번역은 내용을 같은 순서로 표현하지 않을 때가 있습니다. 예를 들어 한국어 ‘빨간 책을 읽어요’에서 ‘책을’이 ‘읽어요’보다 앞에 있지만, 영어 <code>I read a red book</code>에서는 <code>book</code>이 <code>read</code>보다 뒤에 있습니다. 번역과 원문에서 관련된 위치를 선으로 이어 보면, 순서가 바뀐 곳을 한눈에 살펴볼 수 있습니다.</p>
+<p>이 수업에서는 가중치가 가장 큰 위치에 선을 하나 그어 각 행을 요약합니다. 나머지 원문 위치에도 가중치가 남아 있으므로, 선은 모델이 참고한 여러 위치 중 가장 큰 한 곳을 보여줍니다.</p>
+<h2 id="steps">무엇을 하나요?</h2>
+<ol><li>가중치 표를 한 행씩 읽어 최댓값과 원문 위치 번호를 찾습니다.</li><li>위에는 번역의 순서대로, 아래에는 원문의 순서대로 점을 놓고 찾은 번호에 선을 잇습니다.</li><li>위쪽에서 왼쪽에 있는 선부터 두 개씩 골라 아래쪽 번호를 비교합니다. 앞 선의 번호가 더 크면 두 선은 중간에서 교차합니다. 번호가 같으면 같은 점에서 끝나므로 교차에 넣지 않습니다.</li></ol>
+<p><a href="../01-14교시_수학기초_부록.html#section-11">수학 기초 부록 11절 · 최대 위치와 선의 교차</a></p>
+</section><section>
+<h2 id="example">손계산 예제 · 표에서 선까지</h2>
+<p>원문 <strong>‘나는 책을 읽어요’</strong>를 <strong><code>I read books</code></strong>로 번역하는 예를 봅시다. 아래 가중치는 표를 읽는 방법을 연습하기 위해 정한 숫자입니다.</p>
+<h3>1. 가장 큰 가중치가 있는 원문 토큰 찾기</h3>
+<table><thead><tr><th scope="col">번역 토큰</th><th scope="col">1 · 나는</th><th scope="col">2 · 책을</th><th scope="col">3 · 읽어요</th><th scope="col">연결할 원문</th></tr></thead><tbody>
+<tr><th scope="row">I</th><td><strong>0.60</strong></td><td>0.25</td><td>0.15</td><td>1 · 나는</td></tr>
+<tr><th scope="row">read</th><td>0.20</td><td>0.25</td><td><strong>0.55</strong></td><td>3 · 읽어요</td></tr>
+<tr><th scope="row">books</th><td>0.25</td><td><strong>0.50</strong></td><td>0.25</td><td>2 · 책을</td></tr>
+</tbody></table>
+<p><code>read</code> 행의 최댓값은 <strong>0.55</strong>입니다. 그 칸에서 위로 올라가면 열 이름이 <strong>‘3 · 읽어요’</strong>이므로 <code>read</code>와 ‘읽어요’를 잇습니다.</p>
+<h3>2. 두 문장을 원래 순서대로 놓고 잇기</h3>
+<p>위에는 <code>I → read → books</code>, 아래에는 ‘나는 → 책을 → 읽어요’를 씁니다. 위쪽 순서대로 선의 도착 번호를 적으면 <strong>[1, 3, 2]</strong>입니다.</p>
+<svg aria-label="I는 나는, read는 읽어요, books는 책을에 연결됩니다. read와 books의 두 선이 중간에서 교차합니다." class="alignment" role="img" viewBox="0 0 660 170" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#f5f7fa" height="170" width="660"/>
+<g fill="#172d43" font-size="18"><text x="14" y="30">번역</text><text x="14" y="153">원문</text></g>
+<g stroke="#233e54" stroke-width="3"><path d="M125 48V122"/><path d="M330 48L535 122"/><path d="M535 48L330 122"/></g>
+<circle cx="432.5" cy="85" fill="none" r="8" stroke="#172d43" stroke-width="5"/><circle cx="432.5" cy="85" fill="none" r="8" stroke="#e0bc00" stroke-width="2.5"/>
+<g fill="#172d43" font-size="18" text-anchor="middle">
+<text x="125" y="30">I</text><text x="330" y="30">read</text><text x="535" y="30">books</text>
+<text x="125" y="153">1 · 나는</text><text x="330" y="153">2 · 책을</text><text x="535" y="153">3 · 읽어요</text>
+</g><g fill="#172d43"><circle cx="125" cy="48" r="4"/><circle cx="330" cy="48" r="4"/><circle cx="535" cy="48" r="4"/><circle cx="125" cy="122" r="4"/><circle cx="330" cy="122" r="4"/><circle cx="535" cy="122" r="4"/></g>
+</svg>
+<h3>3. 순서가 뒤집힌 선 찾기</h3>
+<p>영어에서는 <code>read</code>가 <code>books</code>보다 앞입니다. 한국어에서는 ‘읽어요’가 ‘책을’보다 뒤에 있습니다. 두 선을 따라가 보면 위쪽에서 왼쪽에 있던 선이 아래쪽에서는 오른쪽에 도착합니다.</p>
+<table><thead><tr><th scope="col">비교할 두 선</th><th scope="col">아래쪽 도착 번호</th><th scope="col">판단</th></tr></thead><tbody>
+<tr><th scope="row">I와 read</th><td>1 → 3</td><td>순서 유지</td></tr>
+<tr><th scope="row">I와 books</th><td>1 → 2</td><td>순서 유지</td></tr>
+<tr><th scope="row">read와 books</th><td>3 → 2</td><td>3 &gt; 2이므로 교차</td></tr>
+</tbody></table>
+<p>순서가 뒤집힌 쌍은 <code>read</code>와 <code>books</code> 한 쌍이므로 <strong>교차는 1회</strong>입니다. 같은 원문 점에서 끝나는 두 선은 교차로 세지 않습니다. 여러 선이 한 점에서 교차하면 교차한 선의 쌍마다 한 번씩 셉니다.</p>
+</section><section>
+<h2 id="model">원논문의 Transformer에서는 어떻게 하나요?</h2>
+<p>앞의 예제에서 번역 <strong><code>read</code> 행</strong>을 다시 봅시다. 10교시에서 했던 것처럼 디코더는 <code>read</code> 위치에서 질의(Query, Q)를 하나 만들고, 인코더가 정리한 원문의 각 위치에서 키(Key, K)와 값(Value, V)을 만듭니다. K는 Q와 비교하는 데 쓰고, V는 원문에서 가져올 내용을 담습니다.</p>
+<ol>
+<li><strong>원문의 각 위치와 비교합니다.</strong> <code>read</code>의 Q를 고정하고 원문 1·2·3번의 K와 차례로 내적합니다. 각 내적을 키 벡터의 성분 수의 제곱근으로 나누면 원문 위치별 점수가 나옵니다.</li>
+<li><strong>점수를 가중치로 바꿉니다.</strong> 소프트맥스(Softmax)는 같은 행의 점수를 합이 1인 비율로 바꿉니다. 앞의 예제에서 <code>read</code> 행에 적힌 [0.20, 0.25, 0.55]를 이 단계의 결과라고 생각하면 됩니다.</li>
+<li><strong>원문의 정보를 섞습니다.</strong> 원문 1·2·3번의 V에 각각 0.20, 0.25, 0.55를 곱하고 같은 성분끼리 더합니다. 예를 들어 각 V의 첫째 성분이 1, 2, 4라면, <code>read</code>가 받는 결과의 첫째 성분은 <strong>0.20 × 1 + 0.25 × 2 + 0.55 × 4 = 2.90</strong>입니다. 나머지 성분도 같은 방식으로 계산합니다.</li>
+</ol>
+<div class="help"><strong>모델이 다음 단계로 넘기는 것은 벡터입니다.</strong> <code>read</code> 위치의 가중치가 [0.20, 0.25, 0.55]라면, 원문 3번을 가장 많이 반영하면서 1번과 2번의 정보도 함께 가져옵니다. 위에서 구한 2.90은 이렇게 만든 벡터의 첫째 성분입니다. 같은 방식으로 나머지 성분도 채웁니다.</div>
+<p>실제 모델에서는 각 헤드가 이런 벡터를 만들고, 여러 헤드의 결과를 이어 붙여 출력 가중치를 곱합니다. 그 결과는 디코더의 다음 계산으로 넘어가고, 마지막 위치의 최종 벡터는 12교시의 다음 토큰 점수 계산에 쓰입니다.</p>
+<p><strong>연결선과 교차 횟수는 우리가 표를 읽는 방법입니다.</strong> 가중치가 가장 큰 원문 위치만 골라 선으로 표시하면 원문과 번역의 위치 관계를 살펴볼 수 있습니다. 모델은 이 선을 그리거나 교차 횟수를 세는 단계 없이 가중합을 계산합니다. 교차가 보이더라도 그 그림만으로 두 토큰이 정확히 대응한다고 판단하기는 어렵습니다.</p>
+<p><strong>왜 원문 뒤쪽도 참고할 수 있나요?</strong> 9교시에는 번역을 이어 쓸 때 아직 모르는 뒤쪽 번역 토큰을 인과 마스크(Causal Mask)로 가렸습니다. 크로스 어텐션에서는 원문 전체가 이미 인코더에 주어져 있으므로, 번역의 <code>read</code>가 <code>books</code>보다 앞에 있어도 원문의 3번 ‘읽어요’을 참고할 수 있습니다.</p>
+<p>원논문 PDF에서 <a href="https://arxiv.org/pdf/1706.03762#page=4">4쪽 · 3.2.1절 식 (1)</a>은 점수를 비율로 바꿔 V를 섞는 계산을, <a href="https://arxiv.org/pdf/1706.03762#page=5">5쪽 · 3.2.3절</a>은 Q가 디코더에서, K·V의 입력이 인코더 출력에서 오는 구조를 보여줍니다.</p>
+<h2 id="practice">워크시트 실습</h2>
+<p><strong>이제 11교시 워크시트 인쇄물을 꺼내 실습해 봅시다.</strong></p>
+<ol>
+<li>1쪽 ①에서 참조표 A의 각 번역 행의 네 수를 비교합니다. 가장 큰 값과 그 값이 있는 원문 번호·토큰 이름을 같은 행의 답란에 적습니다.</li>
+<li>1쪽 ②에서 I, drink, coffee에 대해서만 ①에서 찾은 원문 위치와 선을 잇습니다.</li>
+<li>1쪽 ③에서 두 선씩 골라 아래쪽 원문 번호를 비교합니다. 교차점 표시는 선택입니다. 표시할 때는 노랑 색연필로 작은 원을 그리고, 흑백 인쇄본에서는 검정 작은 원으로 둘러싸세요.</li>
+<li>2쪽 ④에서는 주어진 다섯 연결을 타깃 순서대로 읽고, 앞 번호가 뒤 번호보다 큰 쌍을 각각 한 번씩 셉니다.</li>
+<li>2쪽 ⑤에서는 원문이 이미 주어졌다는 점을 바탕으로, 번역 쪽의 인과 마스크를 원문 열에 적용하지 않는 이유를 씁니다.</li>
+</ol>
+<p><a href="11교시_학생용워크시트.pdf">학생용 워크시트 열기</a></p>
+<h2 id="review">풀이 확인</h2>
+<p>실습 뒤에는 최댓값과 원문 위치를 구분해 썼는지 확인합니다. 교차로 센 두 선을 가리키고, 위에서 왼쪽에 있던 선이 아래에서 어느 쪽에 도착했는지 설명해 봅시다.</p>
+<h2 id="next">다음 교시 연결</h2>
+<p>이번에는 10교시의 가중치 표를 읽었습니다. 다음에는 같은 10교시 계산에서 이어지는 coffee 행의 벡터를 사용해 다음 토큰을 고릅니다.</p>
+<p><a href="../12교시/12교시_가이드북.html">12교시 가이드북 열기 · 단어를 만들어 낸다</a></p>
+</section></main></body></html>

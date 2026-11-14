@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>9교시 - 뒤를 가린다 - 가이드북</title><style>body{max-width:880px;margin:26px auto;padding:0 18px;font:17px/1.55 'Malgun Gothic',sans-serif;color:#172d43}h1,h2,h3{line-height:1.3;margin:.65em 0 .35em}p{margin:.45em 0}a{color:#13568b}table{width:100%;border-collapse:collapse;margin:.45em 0 .7em}th,td{border:1px solid #8090a0;text-align:center;padding:.38em}thead th,.help{background:#edf2f7}caption{text-align:left;font-weight:bold}section{margin-bottom:1.15em}img{display:block;width:min(100%,560px);max-height:240px;object-fit:contain;margin:auto}.help{padding:.5em .75em}.field{display:block;min-height:2.35em;border-bottom:1px solid #8090a0}.filled{color:#174c67;font-weight:bold}.rotation-work th:first-child{width:30%}.rotation-work tbody tr:nth-child(2) .field{min-height:4.5em}.page-no{margin-top:1em;text-align:right;font-size:.85em}code{font-size:1em}nav{display:flex;gap:.85em;flex-wrap:wrap}.answer{border-top:1px solid #8090a0;margin-top:1.5em;padding-top:.7em}@page{size:A4;margin:15mm}@media print{body{margin:0;padding:0;font-size:11pt;line-height:1.4}nav{display:none}.sheet+.sheet{break-before:page}h1,h2,h3,caption{break-after:avoid}tr{break-inside:avoid}.guide section+section{break-before:page}.guide img{max-height:58mm}} .wide .field{min-height:3.4em;background:linear-gradient(transparent 48%,#8090a0 48%,#8090a0 50%,transparent 50%)}.black-mark{color:#000}.mask-demo{max-width:470px}@media print{.sheet{font-size:10.5pt;line-height:1.27}.sheet h2{margin:.42em 0 .23em}.sheet p{margin:.26em 0}.sheet th,.sheet td{padding:.15em .29em}.sheet td .field{min-height:1.3em}.sheet table{margin:.23em 0 .38em}#practice,.next-reference{break-before:page}.next-reference table{break-inside:avoid}}.causal-figure{margin:.55em 0;padding:.5em .7em;background:#edf2f7;border-radius:6px;break-inside:avoid}.causal-figure figcaption{text-align:center}.causal-steps{margin:.3em 0;padding-left:1.55em}.causal-steps li+li{margin-top:.3em}.causal-step{margin-bottom:.16em}.causal-tokens{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3em;text-align:center}.causal-tokens>div{background:white;border:1px solid #627487;border-radius:4px;padding:.09em .12em;color:#151515;line-height:1.25}.causal-tokens .causal-current{border:2px solid #445667}.causal-tokens .causal-blocked{border-style:dashed;background:transparent;align-content:center}.causal-figure p{margin:.35em 0 0}@media print{.causal-figure{font-size:10pt}}@media print{nav{display:none}h2,h3{break-after:avoid}.start-print-page{break-before:page}#practice{break-before:auto!important}}@media print{}</style></head><body class="guide">
+<main class="guide"><section><h1>9교시 - 뒤를 가린다 - 가이드북</h1>
+<nav aria-label="목차"><a href="#start">학습 목표</a> · <a href="#key-concepts">중요 개념</a> · <a href="#why">왜 뒤쪽을 가릴까요?</a> · <a href="#steps">무엇을 하나요? · 마스크 표 읽기</a> · <a href="#example">손계산 예제</a> · <a href="#model">원논문의 Transformer에서는 어떻게 하나요?</a> · <a href="#practice">워크시트 실습</a> · <a href="#review">풀이 확인</a> · <a href="#next">다음 교시 연결</a></nav>
+<h2 id="start">학습 목표</h2><p><strong>인과 마스크의 행과 열을 읽고, 허용된 점수만 Softmax에 넣어 비율을 구합니다.</strong></p>
+<p>8교시에는 원문을 읽는 인코더(Encoder)의 출력 <strong>H</strong>를 만들었습니다. 이번에는 번역을 이어 쓰는 디코더(Decoder)가 지금까지 쓴 번역을 어떻게 읽는지 봅니다. 디코더의 첫 칸에는 <code>&lt;BOS&gt;</code>(Beginning of Sequence, 시작 기호)를 넣고, 그 뒤에 이미 쓴 번역 토큰을 놓습니다.</p>
+<p>각 토큰을 숫자로 바꾼 벡터는 임베딩(Embedding)입니다. 이 벡터를 모은 표를 <strong>E</strong>, 각 자리의 정보를 담은 위치 인코딩(Positional Encoding) 표를 <strong>PE</strong>라고 부릅니다. 같은 위치와 같은 성분끼리 더한 <strong>Y = E + PE</strong>가 디코더 입력입니다. 워크시트에서 d0~d3은 벡터의 첫째부터 넷째 성분을 뜻합니다.</p>
+<h2 id="key-concepts">중요 개념</h2><p>인과 마스크는 디코더가 참고할 수 있는 위치를 정합니다. 검정 ○는 허용, ×는 차단입니다.</p><h2 id="why">왜 뒤쪽을 가릴까요?</h2>
+<p>예를 들어 지금까지 쓴 번역이 <code>&lt;BOS&gt; I drink</code>라면 그다음 단어는 아직 없습니다. 학습할 때는 정답 번역을 한 칸 오른쪽으로 옮겨, 시작 기호 뒤에 정답 토큰들을 입력합니다. 여러 위치의 다음 토큰을 한꺼번에 예측하므로, 뒤쪽을 가리지 않으면 각 위치가 나중에 나와야 할 토큰을 참고할 수 있습니다. 실제로 번역을 생성할 때와 같은 조건에서 다음 토큰을 고르도록, 학습 중에도 뒤쪽을 가립니다.</p>
+<p>셀프 어텐션(Self-Attention)은 같은 문장 안에서 어떤 위치를 참고할지 계산합니다. <strong>인과 마스크(Causal Mask)</strong>는 현재 위치와 그 앞의 위치만 참고하도록 정하는 규칙입니다. 현재 위치의 토큰은 이미 입력에 있으므로 현재 위치도 허용합니다. 아래 그림에서 입력이 한 토큰씩 늘어날 때 마지막 위치가 어디를 참고하는지 따라가 봅시다.</p>
+<figure class="causal-figure">
+<figcaption><strong>그림 1. 입력이 한 토큰씩 늘어나면 어디까지 참고할 수 있나요?</strong></figcaption>
+<ol class="causal-steps"><li><div class="causal-step">입력 <code>&lt;BOS&gt;</code> · 지금 읽는 위치 <strong>&lt;BOS&gt;</strong></div><div class="causal-tokens"><div class="causal-current"><strong>○ &lt;BOS&gt;</strong><br/>현재 위치</div><div class="causal-blocked">아직 입력 전</div><div class="causal-blocked">아직 입력 전</div></div></li><li><div class="causal-step">입력 <code>&lt;BOS&gt; I</code> · 지금 읽는 위치 <strong>I</strong></div><div class="causal-tokens"><div><strong>○ &lt;BOS&gt;</strong><br/>앞쪽</div><div class="causal-current"><strong>○ I</strong><br/>현재 위치</div><div class="causal-blocked">아직 입력 전</div></div></li><li><div class="causal-step">입력 <code>&lt;BOS&gt; I drink</code> · 지금 읽는 위치 <strong>drink</strong></div><div class="causal-tokens"><div><strong>○ &lt;BOS&gt;</strong><br/>앞쪽</div><div><strong>○ I</strong><br/>앞쪽</div><div class="causal-current"><strong>○ drink</strong><br/>현재 위치</div></div></li></ol>
+</figure>
+<p><a href="../01-14교시_수학기초_부록.html#section-9">수학 기초 부록 9절 · 타깃 입력과 Causal Mask</a></p>
+</section><section>
+<h2 id="steps">무엇을 하나요? · 마스크 표 읽기</h2>
+<p>그림 1에서 단계마다 마지막 토큰이 어디까지 참고할 수 있는지 봤습니다. 아래 표에서는 그 세 단계를 한 줄씩 모아 봅니다. <strong>○는 참고할 수 있는 위치, ×는 가린 위치</strong>입니다.</p>
+<div class="mask-demo black-mark"><table>
+<caption>마스크 예시 · 위치 1~3</caption>
+<thead><tr><th scope="col">현재 위치 ↓ / 참고할 위치 →</th><th scope="col">1 · &lt;BOS&gt;</th><th scope="col">2 · I</th><th scope="col">3 · drink</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 · &lt;BOS&gt;</th><td>○</td><td>×</td><td>×</td></tr>
+<tr><th scope="row">2 · I</th><td>○</td><td>○</td><td>×</td></tr>
+<tr><th scope="row">3 · drink</th><td>○</td><td>○</td><td>○</td></tr>
+</tbody></table></div>
+<p><strong>읽는 순서.</strong> 그림의 두 번째 단계처럼 <code>I</code>에서 읽는다면 왼쪽에서 <strong>2 · I 행</strong>을 먼저 찾습니다. 그 행을 오른쪽으로 읽으면 1번은 앞쪽이라 ○, 2번은 행과 열의 위치가 같아 ○, 3번은 뒤쪽이라 ×입니다. 그림에서 ‘아직 입력 전’으로 보였던 3번 위치가 표에서는 ×가 됩니다.</p>
+<p>이제 같은 2번 행의 ○·×를 점수에 적용해 봅시다.</p>
+<h2 id="example">손계산 예제</h2>
+<p>위 마스크의 2번 행 [○, ○, ×]를 사용합니다. 아래 점수 [0.71, 0.00, 1.41]은 마스크를 적용하는 법을 보여주기 위해 미리 정한 값입니다.</p>
+<p><strong>실제 모델의 점수는 어디서 나오나요?</strong> 5교시처럼 현재 위치의 질의 벡터 Q와 참고할 위치의 키 벡터 K를 내적합니다. 같은 성분끼리 곱해 더한 뒤, 키 벡터의 성분 수 d<sub>k</sub>의 제곱근 √d<sub>k</sub>로 나누면 스케일 점수입니다. 예를 들어 내적이 1이고 키가 두 성분이면 1 ÷ √2 ≈ 0.71입니다.</p>
+<div class="mask-demo black-mark"><table><thead><tr><th scope="col">2번 행에서 하는 일</th><th scope="col">후보 1</th><th scope="col">후보 2</th><th scope="col">후보 3</th></tr></thead><tbody>
+<tr><th scope="row">허용 여부</th><td>○</td><td>○</td><td>×</td></tr>
+<tr><th scope="row">가리기 전 점수</th><td>0.71</td><td>0.00</td><td>1.41</td></tr>
+<tr><th scope="row">가린 뒤 점수</th><td>0.71</td><td>0.00</td><td>차단</td></tr>
+<tr><th scope="row">지수값</th><td>e<sup>0.71</sup> ≈ 2.03</td><td>e<sup>0</sup> = 1.00</td><td>건너뜀</td></tr>
+<tr><th scope="row">같은 행의 분모</th><td colspan="3">2.03 + 1.00 = 3.03</td></tr>
+<tr><th scope="row">최종 비율</th><td>2.03 ÷ 3.03 ≈ 0.67</td><td>1.00 ÷ 3.03 ≈ 0.33</td><td>0.00</td></tr>
+</tbody></table></div>
+<p>6교시의 소프트맥스(Softmax)와 같은 계산입니다. 허용된 두 점수를 각각 e의 지수로 넣고, 손계산에서는 표에 표시한 소수 둘째 자리까지의 지수값을 사용합니다. 두 지수값을 더한 3.03으로 각 지수값을 나눕니다. 셋째 칸은 처음부터 합에 넣지 않고 최종 비율에만 0.00을 씁니다.</p>
+<p><strong>점수 0과 차단의 차이.</strong> 0점도 허용된 칸이면 지수값이 1입니다. 차단한 칸에 점수 0을 적으면 그 칸까지 분모에 들어가 비율이 생깁니다. 원논문에서는 차단 점수를 −∞(음의 무한대)로 처리합니다. 손계산에서는 지수값을 구할 때 그 칸을 건너뛰면 됩니다.</p>
+</section><section>
+<h2 id="model">원논문의 Transformer에서는 어떻게 하나요?</h2><p>원논문은 미래 위치의 점수를 Softmax 전에 음의 무한대로 처리합니다. 손계산에서는 그 칸을 건너뛰고 최종 비율에 0을 씁니다.</p><p><a href="https://arxiv.org/html/1706.03762#S3.SS2.SSS3">Transformer 원논문</a> <strong>3.2.3절 Applications of Attention in our Model</strong> (arXiv PDF <a href="https://arxiv.org/pdf/1706.03762#page=5">5쪽</a> <a href="../1706.03762v7-page-5.pdf" title="인터넷 없이 원논문 PDF 5쪽 열기">[오프라인 5쪽]</a>) · 디코더 셀프 어텐션에서 뒤쪽 위치를 Softmax 전에 가리는 이유를 확인할 수 있습니다.</p><h2 id="practice">워크시트 실습</h2>
+<p><strong>이제 9교시 워크시트 인쇄물을 꺼내 실습해 봅시다.</strong></p>
+<ol><li>1쪽 ①에서 참조표 A의 토큰 행과 참조표 B의 위치 행을 입력 순서대로 짝짓고, 같은 성분끼리 더해 Y를 씁니다.</li>
+<li>1쪽 ②에서 행과 열의 위치가 같으면 검정 ○로 표시합니다. 그 왼쪽은 ○, 오른쪽은 ×입니다. 그림 1의 세 번째 단계와 비교하며, 워크시트의 <code>drink</code> 행에서 <code>coffee</code> 열이 현재 위치의 어느 쪽에 있는지 찾아보세요.</li>
+<li>2쪽 ③에서 참조표 C의 점수 중 ○ 칸은 그대로 옮기고, × 칸에는 ‘차단’을 씁니다.</li>
+<li>2쪽 ④에서 허용 점수만 참조표 D의 지수값으로 바꿉니다. 각 행의 허용 지수값을 더해 분모를 구하고, 각각 나눕니다. 차단 칸의 최종 비율은 0.00입니다.</li>
+<li>2쪽 ⑤에서 0점의 지수값 1.00이 분모에 들어간다는 사실로, 점수 0과 차단의 차이를 설명합니다.</li></ol>
+<p><a href="9교시_학생용워크시트.pdf">학생용 워크시트 열기</a></p>
+<h2 id="review">풀이 확인</h2><p>실습이 끝나면 강사가 화면으로 풀이를 설명합니다. ②의 <code>drink</code> 행에서 <code>&lt;BOS&gt;</code>, <code>I</code>, <code>drink</code> 열은 ○이고, 오른쪽의 <code>coffee</code> 열은 ×입니다. ④에서는 허용된 칸의 지수값만 분모에 더했는지 확인하세요. 표시 합이 1에서 조금 벗어나는 경우에는 반올림을 확인합니다.</p>
+<h2 id="next">다음 교시 연결</h2><p>10교시 워크시트는 9교시의 디코더 표현 D를 참조표 A에, 8교시의 인코더 출력 H를 참조표 B에 제공합니다. D는 마스크를 적용한 셀프 어텐션 결과를 입력 Y와 합치고 정규화해 얻은 디코더 표현입니다. 다음 교시에는 D로 질의(Query, Q)를 만들고, H로 키(Key, K)와 값(Value, V)을 만들어 원문을 참고합니다.</p><p><a href="../10교시/10교시_가이드북.html">10교시 가이드북 열기 · 원문을 본다</a></p></section></main></body></html>

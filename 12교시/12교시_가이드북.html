@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>12교시 - 단어를 만들어 낸다 - 가이드북</title><style>body{max-width:880px;margin:26px auto;padding:0 18px;font:17px/1.55 'Malgun Gothic',sans-serif;color:#172d43}h1,h2,h3{line-height:1.3;margin:.65em 0 .35em}p{margin:.45em 0}a{color:#13568b}table{width:100%;border-collapse:collapse;margin:.45em 0 .7em}th,td{border:1px solid #8090a0;text-align:center;padding:.38em}thead th,.help{background:#edf2f7}caption{text-align:left;font-weight:bold}section{margin-bottom:1.15em}img{display:block;width:min(100%,560px);max-height:240px;object-fit:contain;margin:auto}.help{padding:.5em .75em}.field{display:block;min-height:2.35em;border-bottom:1px solid #8090a0}.filled{color:#174c67;font-weight:bold}.rotation-work th:first-child{width:30%}.rotation-work tbody tr:nth-child(2) .field{min-height:4.5em}.page-no{margin-top:1em;text-align:right;font-size:.85em}code{font-size:1em}nav{display:flex;gap:.85em;flex-wrap:wrap}.answer{border-top:1px solid #8090a0;margin-top:1.5em;padding-top:.7em}@page{size:A4;margin:15mm}@media print{body{margin:0;padding:0;font-size:11pt;line-height:1.4}nav{display:none}.sheet+.sheet{break-before:page}h1,h2,h3,caption{break-after:avoid}tr{break-inside:avoid}.guide section+section{break-before:page}.guide img{max-height:58mm}}.wide .field{min-height:3.6em;background:linear-gradient(transparent 48%,#8090a0 48%,#8090a0 50%,transparent 50%)}.sheet table{table-layout:fixed}@media print{.sheet{font-size:10.5pt;line-height:1.32}.sheet h2{margin:.43em 0 .24em}.sheet p{margin:.3em 0}.sheet th,.sheet td{padding:.21em .28em}.sheet td .field{min-height:1.5em}.sheet table{margin:.26em 0 .42em}#practice{break-before:page}}@media print{nav{display:none}h2,h3{break-after:avoid}.start-print-page{break-before:page}#practice{break-before:auto!important}}@media print{}@media print{#practice{break-before:page!important}}@media print{.output-size{break-inside:avoid}.output-size tr{break-inside:avoid}}@media print{.beam-example{break-before:page}}</style></head><body class="guide">
+<main class="guide"><section><h1>12교시 - 단어를 만들어 낸다 - 가이드북</h1>
+<nav aria-label="목차"><a href="#start">학습 목표</a> · <a href="#concept">중요 개념</a> · <a href="#why">왜 하나요?</a> · <a href="#steps">무엇을 하나요?</a> · <a href="#example">손계산 예제</a> · <a href="#model">원논문의 Transformer에서는 어떻게 하나요?</a> · <a href="#practice">워크시트 실습</a> · <a href="#review">풀이 확인</a> · <a href="#next">다음 교시 연결</a></nav>
+<h2 id="start">학습 목표</h2>
+<ul><li>다음 토큰을 고를 때 마지막 입력 위치의 벡터를 쓰는 이유를 설명합니다.</li><li>한 벡터에서 후보별 점수와 확률을 구하고, 가장 큰 값을 가진 후보를 고릅니다.</li></ul>
+<h2 id="concept">중요 개념</h2>
+<p><strong>h</strong>는 마지막 입력 위치에서 FFN에 들어가는 벡터, <strong>z</strong>는 FFN과 잔차 연결·층 정규화를 거쳐 후보별 점수를 계산할 때 쓰는 벡터입니다. FFN(Feed-Forward Network, 순전파 신경망)은 한 토큰의 벡터를 처리하고, 층 정규화(Layer Normalization, LayerNorm)는 그 벡터의 중심과 크기를 조절합니다.</p>
+<p><strong>출력 투영(Output Projection)</strong>은 z를 후보별 점수 하나씩으로 바꾸는 계산입니다. 이 점수를 <strong>로짓(Logit)</strong>이라고 합니다. <strong>소프트맥스(Softmax)</strong>는 후보들의 점수를 합이 1인 확률로 바꿉니다.</p>
+<h2 id="why">왜 마지막 위치의 벡터를 쓸까요?</h2>
+<p>이미 쓴 번역이 <code>&lt;BOS&gt; we read</code>라면, 지금 필요한 것은 <code>read</code> 바로 뒤에 올 토큰입니다. 디코더에서는 각 위치의 출력으로 그 위치 바로 다음 토큰을 예측합니다. <code>we</code> 위치의 출력은 <code>we</code> 다음을 예측하고, <code>read</code> 위치의 출력은 지금까지 주어진 세 위치를 참고해 <code>read</code> 다음을 예측합니다. 9교시의 인과 마스크가 각 위치에서 볼 수 있는 번역의 범위를 정하고, 10교시의 크로스 어텐션이 원문 정보도 더합니다.</p>
+<h2 id="steps">무엇을 하나요?</h2>
+<ol><li>마지막 위치의 h를 FFN으로 처리하고, 결과를 h에 더한 뒤 정규화해 z를 만듭니다.</li><li>z와 후보마다 주어진 가중치의 같은 성분을 곱해 더합니다. 후보가 세 개라면 점수도 세 개입니다.</li><li>각 점수 x를 지수값 eˣ으로 바꾸고 모든 후보의 지수값을 더합니다. 각 지수값을 그 합으로 나누면 후보별 확률이 됩니다.</li><li>이 실습에서는 최댓값의 위치를 찾는 <strong>argmax</strong>로 다음 토큰을 고릅니다.</li></ol>
+</section><section>
+<h2 id="example">손계산 예제</h2>
+<p><code>read</code> 위치의 예시 벡터를 <strong>h = [−2, 1, 1, −2]</strong>로 두고, 다음 후보가 <code>books</code>, <code>news</code>, <code>stories</code> 세 개라고 합시다.</p>
+<h3>1. 마지막 위치의 벡터 준비하기</h3>
+<p>손계산에서 첫 가중치 W₁은 항등행렬이라 h를 그대로 내보냅니다. 정류 선형 함수(Rectified Linear Unit, ReLU)로 음수를 0으로 바꾸면 [0, 1, 1, 0]입니다. 둘째 가중치 W₂는 첫째와 넷째 성분을 맞바꿉니다. 이 예에서는 두 값이 모두 0이므로 FFN 결과 F는 [0, 1, 1, 0]입니다.</p>
+<p>잔차 연결로 h + F = [−2, 2, 2, −2]를 구합니다. 평균은 (−2 + 2 + 2 − 2) ÷ 4 = 0입니다. 평균이 0이므로 편차도 [−2, 2, 2, −2]입니다. 네 편차를 제곱해 평균을 내면 분산은 4입니다. 각 편차를 표준편차 √4 = 2로 나누면 <strong>z = [−1, 1, 1, −1]</strong>입니다.</p>
+<h3>2. 후보별 점수와 확률 구하기</h3>
+<p><strong>출력 가중치는 후보의 점수를 매기는 기준입니다.</strong> 표에서 후보 하나마다 z의 네 성분에 각각 곱할 숫자 네 개가 있습니다. 같은 z를 모든 후보에 쓰되 후보마다 자기 행의 가중치를 곱해 더합니다. 실제 모델의 가중치는 학습으로 정하고, 이 표에는 손으로 계산하기 쉬운 예시 값을 넣었습니다.</p>
+<p><code>books</code>의 [0, 1, 0, 0]을 보면 둘째 성분에만 1을 곱합니다. z = [−1, 1, 1, −1]의 둘째 성분이 1이므로, 네 곱을 더한 점수는 1입니다. 다른 후보도 같은 z에 자기 행의 숫자를 곱해 점수를 구합니다. 확률은 세 후보의 점수를 모두 구한 뒤 계산합니다.</p>
+<table><thead><tr><th scope="col">후보</th><th scope="col">출력 가중치</th><th scope="col">같은 성분끼리 곱해 더한 점수</th></tr></thead><tbody>
+<tr><th scope="row">books</th><td>[0, 1, 0, 0]</td><td>(−1)×0 + 1×1 + 1×0 + (−1)×0 = 1</td></tr>
+<tr><th scope="row">news</th><td>[0.5, 0, 0, 0]</td><td>(−1)×0.5 + 1×0 + 1×0 + (−1)×0 = −0.50</td></tr>
+<tr><th scope="row">stories</th><td>[1, 1, 0, 0]</td><td>(−1)×1 + 1×1 + 1×0 + (−1)×0 = 0</td></tr>
+</tbody></table>
+<p>6교시에서처럼 점수 x를 exp(x)로 바꿉니다. 아래 예에서는 지수값을 소수 둘째 자리까지 표시해 계산에 씁니다. 세 지수값의 합 <strong>2.72 + 0.61 + 1.00 = 4.33</strong>이 모든 후보의 공통 분모입니다.</p>
+<table><thead><tr><th scope="col">후보</th><th scope="col">지수값</th><th scope="col">확률</th></tr></thead><tbody>
+<tr><th scope="row">books</th><td>exp(1) ≈ 2.72</td><td>2.72 ÷ 4.33 ≈ 0.63</td></tr>
+<tr><th scope="row">news</th><td>exp(−0.50) ≈ 0.61</td><td>0.61 ÷ 4.33 ≈ 0.14</td></tr>
+<tr><th scope="row">stories</th><td>exp(0) = 1.00</td><td>1.00 ÷ 4.33 ≈ 0.23</td></tr>
+</tbody></table>
+<p><strong>3. 다음 토큰 고르기.</strong> 가장 높은 확률은 0.63이므로 이 예에서는 <code>books</code>를 고릅니다. 지수값은 점수가 클수록 커지고 모든 후보를 같은 양수로 나누므로, 점수가 가장 큰 후보의 확률도 가장 큽니다.</p>
+<p><a href="../01-14교시_수학기초_부록.html#section-12">수학 기초 부록 12절 · 마지막 행과 출력 투영</a></p>
+</section><section>
+<h2 id="model">원논문의 Transformer에서는 어떻게 하나요?</h2>
+<p>원논문 그림 1의 디코더 위쪽을 보면 <strong>선형 변환(Linear) → 소프트맥스(Softmax) → 출력 확률(Output Probabilities)</strong>이 이어집니다. 앞의 손계산을 이 세 상자에 대응해 봅시다.</p>
+<ol>
+<li><strong>마지막 토큰 위치의 벡터를 가져옵니다.</strong> <code>&lt;BOS&gt; we read</code> 다음을 고른다면, 여러 디코더 층을 모두 지난 <code>read</code> 위치의 최종 벡터를 사용합니다. 예제의 z에 해당하며, Transformer Base에서는 벡터 하나에 512개 성분이 있습니다.</li>
+<li><strong>어휘 전체에 점수를 하나씩 매깁니다.</strong> 손계산에서 후보의 가중치 네 개를 z의 네 성분에 곱해 더했듯이, 실제 모델에서는 후보마다 학습된 가중치 512개를 최종 벡터의 같은 성분에 곱해 더합니다. 어휘가 V개라면 점수도 V개입니다. 후보를 한 행씩 놓으면 <strong>출력 가중치 W는 V행 × 512열</strong>입니다.
+<div class="output-size">
+<table><thead><tr><th scope="col">어떤 모델인가요?</th><th scope="col">후보 수 V</th><th scope="col">z의 성분 수</th><th scope="col">가중치 W의 크기</th></tr></thead><tbody>
+<tr><th scope="row">화면 예제</th><td>3</td><td>4</td><td>3 × 4</td></tr>
+<tr><th scope="row">영어–독일어 Transformer Base</th><td>약 37,000</td><td>512</td><td>약 37,000 × 512</td></tr>
+<tr><th scope="row">영어–프랑스어 Transformer Base</th><td>32,000</td><td>512</td><td>32,000 × 512</td></tr>
+</tbody></table>
+<p>어휘 사전에 토큰이 V개 있으면 토큰 ID마다 점수가 하나씩 나옵니다. 사전에는 단어 조각이나 종료 기호 같은 특수 토큰도 들어갑니다. 위 어휘 크기는 원논문 <a href="https://arxiv.org/html/1706.03762#S5.SS1">5.1절 Training Data and Batching</a>에서 확인할 수 있습니다.</p>
+<p><strong>화면 예제를 행렬곱으로 읽기.</strong> W의 세 행에는 각각 <code>books</code>, <code>news</code>, <code>stories</code>의 가중치가 있습니다. 각 행을 열로 바꾸도록 W를 전치한 뒤, 같은 z를 곱합니다.</p>
+<p><strong>zW<sup>T</sup></strong>　(1 × 4) × (4 × 3) → (1 × 3)　<strong>[1, −0.5, 0]</strong></p>
+<p>영어–독일어 모델도 같은 순서입니다. 성분이 512개인 z에 W<sup>T</sup>를 곱하면 한 행에 약 37,000개의 점수가 나옵니다. 후보를 처음부터 열에 놓는 표기에서는 그 가중치 표를 512 × V로 씁니다.</p>
+</div></li>
+<li><strong>점수를 확률로 바꾸고 다음 토큰을 정합니다.</strong> 예제는 세 지수값을 더해 공통 분모를 구했습니다. 실제 모델은 어휘 전체의 점수를 Softmax에 넣어 다음 토큰의 확률을 얻습니다. 손계산에서는 지금 확률이 가장 큰 후보 하나를 고릅니다. 원논문의 번역 실험에서는 번역 후보 문장을 여러 개 남겨 비교하는 빔 탐색(Beam Search)을 사용했습니다.</li>
+</ol>
+<h3 class="beam-example">빔 크기 2로 두 단계 이어 써 보기</h3>
+<p>번역을 <code>We saw</code>까지 썼다고 합시다. <strong>빔 크기 2</strong>는 지금까지 쓴 번역 후보 중 점수가 높은 두 개를 남겨 다음 단계에서도 이어 쓴다는 뜻입니다.</p>
+<p><strong>첫 단계 · 토큰을 하나 붙입니다.</strong> <code>We saw</code> 뒤에 <code>a</code>가 올 확률은 0.60, <code>the</code>가 올 확률은 0.40입니다. <code>We saw a</code>와 <code>We saw the</code>를 둘 다 남깁니다.</p>
+<p><strong>둘째 단계 · 두 후보를 각각 이어 씁니다.</strong> <code>We saw a</code> 뒤에는 <code>bird</code>(0.50)나 <code>cat</code>(0.30), <code>We saw the</code> 뒤에는 <code>moon</code>(0.90)이나 <code>sun</code>(0.10)을 붙여 봅니다. 표에는 각 후보에서 확률이 높은 두 가지 이어 쓰기를 보여 줍니다.</p>
+<p><strong>두 번의 선택을 함께 점수로 매깁니다.</strong> <code>We saw a bird</code>가 되려면 먼저 <code>a</code>를 고르고, 그 뒤에 <code>bird</code>를 골라야 합니다. 첫 선택의 확률 0.60에 그다음 선택의 확률 0.50을 곱한 <strong>0.30</strong>이 누적 점수입니다.</p>
+<table><thead><tr><th scope="col">두 단계 이어 쓴 후보</th><th scope="col">누적 점수 계산</th><th scope="col">다음 단계에 남기기</th></tr></thead><tbody>
+<tr><th scope="row"><code>We saw a bird</code></th><td>0.60 × 0.50 = 0.30</td><td>2위 · 남김</td></tr>
+<tr><th scope="row"><code>We saw a cat</code></th><td>0.60 × 0.30 = 0.18</td><td>제외</td></tr>
+<tr><th scope="row"><code>We saw the moon</code></th><td>0.40 × 0.90 = 0.36</td><td>1위 · 남김</td></tr>
+<tr><th scope="row"><code>We saw the sun</code></th><td>0.40 × 0.10 = 0.04</td><td>제외</td></tr>
+</tbody></table>
+<p><strong>네 후보 중 점수가 높은 두 개를 남깁니다.</strong> 누적 점수는 0.36 &gt; 0.30 &gt; 0.18 &gt; 0.04 순입니다. <code>We saw the moon</code>과 <code>We saw a bird</code>를 다음 단계로 넘깁니다.</p>
+<p><strong>매번 하나만 고르면 어떻게 될까요?</strong> argmax는 첫 단계에서 0.60인 <code>a</code>만 남기므로, 둘째 단계에서 <code>bird</code>가 이어집니다. 빔 탐색은 첫 단계에서 0.40인 <code>the</code>도 남겨 두었기 때문에, 다음 단계에서 누적 점수가 더 높은 <code>We saw the moon</code>을 찾을 수 있습니다.</p>
+<p><strong>입력 임베딩과 출력 가중치를 공유합니다.</strong> 원논문에서는 같은 학습 행렬을 인코더와 디코더의 입력 임베딩, 그리고 출력 점수를 만드는 데 사용합니다. 입력에서는 토큰 이름으로 표의 한 행을 꺼냅니다. 출력에서는 마지막 위치의 벡터를 그 표의 각 행과 내적해 후보마다 점수를 구합니다.</p>
+<p><a href="https://arxiv.org/html/1706.03762#S3.SS4">Transformer 원논문</a> <strong>3.4절 Embeddings and Softmax</strong> (arXiv PDF <a href="https://arxiv.org/pdf/1706.03762#page=5">5쪽</a> <a href="../1706.03762v7-page-5.pdf" title="인터넷 없이 원논문 PDF 5쪽 열기">[오프라인 5쪽]</a>) · 디코더 출력에 선형 변환과 Softmax를 적용해 다음 토큰의 확률을 만드는 부분을 보세요.</p><h2 id="practice">워크시트 실습</h2><p><strong>이제 12교시 워크시트 인쇄물을 꺼내 실습해 봅시다.</strong></p>
+<ol><li>①~② 1쪽 참조표 A의 coffee 행으로 FFN과 잔차·정규화를 적용합니다. 평균과 분산은 한 행의 네 성분으로 구합니다.</li><li>③ 1쪽에서 마지막 벡터 z와 참조표 B의 I 행을 내적합니다.</li><li>④ 2쪽에서 모든 후보의 점수와 지수값을 구합니다. 참조표 C를 사용하고, 다섯 지수값을 모두 더해 공통 분모를 구합니다.</li><li>⑤ 가장 큰 점수의 후보와 확률을 쓰고, ⑥에서는 왜 마지막 입력 행을 쓰는지 설명합니다.</li></ol>
+<p><a href="12교시_학생용워크시트.pdf">학생용 워크시트 열기</a></p>
+<h2 id="review">풀이 확인</h2><p>실습이 끝나면 강사가 화면으로 풀이를 설명합니다. 내적식, 다섯 후보를 포함한 분모, 가장 큰 점수와 그 후보의 확률을 확인합니다.</p>
+<h2 id="next">다음 교시 연결</h2><p>13교시에는 고른 토큰을 지금까지의 입력 끝에 붙여 다음 계산을 시작합니다.</p><p>13교시가 시작되면 강사의 안내에 따라 13교시 자료를 펼칩니다.</p></section></main></body></html>
