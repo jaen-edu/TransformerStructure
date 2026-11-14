@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>1교시 - 번역의 큰 그림 - 과정안내서</title><style>
+body{font:19px/1.55 "Malgun Gothic",sans-serif;color:#172d43;max-width:940px;margin:32px auto;padding:0 22px}
+h1{font-size:1.75em;line-height:1.25;margin:0 0 .4em}h2{font-size:1.3em;margin:1.25em 0 .35em}h3{font-size:1.08em}p{margin:.5em 0}li{margin:.25em 0}.panel{padding:.55em .8em;background:#eef3f7;border-radius:5px}a{color:#164b73}
+figure{margin:.65em 0;break-inside:avoid}.flow{display:grid;grid-template-columns:1.5fr auto 1fr;align-items:center;gap:.45em;margin:.4em 0}.box{border:1px solid #8195a7;padding:.4em .55em;border-radius:5px}.blank{height:8mm;border-bottom:1px solid #91a2b0}.answer{color:#174776;font-weight:700}
+table{border-collapse:collapse;width:100%}th,td{border:1px solid #9aaabb;padding:.25em .45em;text-align:left}th{background:#eef3f7}tr{break-inside:avoid}
+@page{size:A4;margin:15mm}@media print{body{margin:0;padding:0;font-size:11pt;print-color-adjust:exact}h2,h3{break-after:avoid}}
+.repeat-flow{padding:.55em .7em;background:#eef3f7;border-radius:6px}.repeat-flow figcaption{margin:0 0 .45em}.repeat-start{background:white;margin-bottom:.45em}.repeat-branches{display:grid;grid-template-columns:1.35fr 1fr;gap:.45em}.repeat-branches .box{background:white}.repeat-next{font-weight:700}@media(max-width:540px){.repeat-branches{grid-template-columns:1fr}}@media print{.repeat-section{break-inside:avoid}}.input-figure,.repeat-flow{background:#f0f0f0;padding:.55em .7em;border-radius:6px}.input-figure .box,.repeat-flow .box{background:#fff;border-color:#8c8c8c}.repeat-flow .repeat-start{margin:0 auto;text-align:center;max-width:78%;padding:.3em .55em}.repeat-flow .flow-decision{background:#dedede}.flow-down{text-align:center;font-weight:700;line-height:1.15}.repeat-branches{align-items:start}.repeat-next{display:block;margin-top:.25em}
+.token-chart{position:relative;height:17rem;font-size:.92em;--ink:#53606b;--return:#334859}
+.chart-node,.chart-decision,.chart-label,.chart-loop-label{position:absolute;box-sizing:border-box;text-align:center}
+.chart-node{background:white;border:1px solid var(--ink);border-radius:5px;padding:.28rem .35rem;line-height:1.3}
+.chart-input,.chart-pick{left:26%;width:48%}.chart-input{top:0}.chart-pick{top:3.45rem}
+.chart-decision{top:6.9rem;left:32%;width:36%;height:4rem;display:grid;place-items:center;background:var(--ink);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);isolation:isolate;line-height:1.15}
+.chart-decision:before{content:"";position:absolute;inset:2px 4px;background:#e1e1e1;clip-path:inherit;z-index:-1}
+.chart-line{position:absolute;border-left:2px solid var(--ink);left:50%;width:0}
+.chart-down:after{content:"";position:absolute;bottom:0;left:-5px;border-top:6px solid var(--ink);border-left:4px solid transparent;border-right:4px solid transparent}
+.chart-first{top:2.5rem;height:.95rem}.chart-second{top:5.95rem;height:.95rem}.chart-stem{top:10.9rem;height:.6rem}
+.chart-split{position:absolute;top:11.5rem;left:30%;width:43%;border-top:2px solid var(--ink)}
+.chart-no-line,.chart-yes-line{top:11.5rem;height:1.7rem}.chart-no-line{left:30%}.chart-yes-line{left:73%}
+.chart-label{top:11.8rem;background:#f0f0f0;padding:0 .25rem;line-height:1.2}.chart-no-label{left:calc(30% + .45rem)}.chart-yes-label{left:calc(73% + .45rem)}
+.chart-continue,.chart-stop{top:13.2rem;width:38%;min-height:2.8rem}.chart-continue{left:11%}.chart-stop{left:54%}
+.chart-loop{position:absolute;left:3%;top:1.25rem;width:23%;height:13.3rem;border-left:2px solid var(--return);border-top:2px solid var(--return);pointer-events:none}
+.chart-loop:before{content:"";position:absolute;bottom:0;left:0;width:35%;border-bottom:2px solid var(--return)}
+.chart-loop:after{content:"";position:absolute;right:0;top:-5px;border-left:7px solid var(--return);border-top:4px solid transparent;border-bottom:4px solid transparent}
+.chart-loop-label{left:4.5%;top:6.2rem;width:20%;color:var(--return);font-size:.8em;font-weight:700}
+@media(max-width:540px){.token-chart{font-size:.74em}.chart-decision{left:28%;width:44%}}
+.input-figure .flow{grid-template-columns:minmax(0,1.5fr) 1.25em minmax(0,1fr);margin:.15em 0}.input-figure .flow>span{text-align:center}.input-transfer .transfer-track{grid-column:3;position:relative;min-height:1.65em;display:flex;align-items:center;justify-content:center;gap:.45em;font-size:.84em}.transfer-arrow{position:relative;align-self:stretch;width:0;border-left:2px solid #53606b}.transfer-arrow:after{content:"";position:absolute;bottom:0;left:-5px;border-top:6px solid #53606b;border-left:4px solid transparent;border-right:4px solid transparent}@media(max-width:540px){.input-figure .flow{font-size:.85em}}
+
+.repeat-flow{padding:.95em 1.05em .8em}
+.repeat-flow figcaption{margin-bottom:.85em}
+.token-chart{height:23.5rem}
+.chart-input,.chart-pick{height:3.65rem;padding:.48rem .5rem}
+.chart-input{top:.2rem}.chart-pick{top:5.15rem}
+.chart-first{top:3.85rem;height:1.3rem}.chart-second{top:8.8rem;height:1.3rem}
+.chart-decision{top:10.1rem;height:4.8rem}
+.chart-stem{top:14.9rem;height:.9rem}.chart-split{top:15.8rem}
+.chart-no-line,.chart-yes-line{top:15.8rem;height:2.55rem}
+.chart-label{top:16.55rem}
+.chart-continue,.chart-stop{top:18.35rem;min-height:3.8rem;padding:.45rem .35rem}
+.chart-loop{top:2.025rem;height:18.225rem}
+.chart-loop-label{top:9.75rem}
+@media(max-width:540px){.chart-node{line-height:1.25}.chart-input,.chart-pick{left:20%;width:60%}.chart-loop{width:17%}.chart-loop-label{left:4%;width:19%}}
+@media(max-width:390px){body{padding:0 12px}.token-chart{font-size:.65em}.chart-input,.chart-pick{padding:.4rem .3rem}.chart-loop-label{width:15%}}
+.learning-map{background:#f0f0f0;padding:.75em .85em;border-radius:6px}
+.learning-map figcaption{margin-bottom:.6em}
+.learning-grid{display:grid;grid-template-columns:minmax(0,1fr) 4.5em minmax(0,1fr);gap:.32em .48em;align-items:center}
+.map-card,.learning-band{background:#fff;border:1px solid #929292;border-radius:5px;padding:.38em .55em}
+.learning-band{margin:.45em 0}.map-src,.map-encoder{grid-column:1}.map-tgt,.map-decoder{grid-column:3}.map-prep{grid-column:1/-1;text-align:center}
+.map-down{text-align:center;font-weight:bold;line-height:1.1}
+.map-encoder,.map-decoder,.map-transfer{grid-row:4}.map-transfer{grid-column:2;text-align:center;font-size:.8em}
+.map-transfer-arrow{display:block;font-weight:bold;font-size:1.4em;line-height:1.05}
+@media(max-width:540px){.learning-grid{grid-template-columns:minmax(0,1fr) 2.4em minmax(0,1fr);font-size:.86em}.map-transfer{font-size:.72em}}
+@media print{.learning-section{break-inside:avoid}.learning-map{font-size:10pt}}
+@media print{.course-timetable{break-before:page}}
+.learning-grid{grid-template-columns:minmax(0,1fr) 4.5em minmax(0,1fr) 1.35em}
+.map-prep{grid-column:1/4}
+.map-return{grid-column:4;grid-row:1/9;align-self:stretch;position:relative;margin:1.65em 0 1.65em -.48em;border:2px solid #53606b;border-left:0}
+.map-return:after{content:"";position:absolute;left:-1px;top:-5px;border-right:7px solid #53606b;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.map-calculations{list-style:none;padding:0;margin:.35em 0 0;display:grid;grid-template-columns:1fr 1fr;gap:.25em .85em}
+.map-calculations li{margin:0}
+@media(max-width:540px){.learning-grid{grid-template-columns:minmax(0,1fr) 2.4em minmax(0,1fr) 1em}.map-calculations{grid-template-columns:1fr}}
+.learning-map{word-break:keep-all}.lesson-nav{margin:.5em 0 1em}@media print{.lesson-nav{display:none}}@media print{nav{display:none}h2,h3{break-after:avoid}.start-print-page{break-before:page}}@media print{.learning-section{font-size:.93em}}</style></head><body><main><h1>1교시 - 번역의 큰 그림 - 과정안내서</h1><nav aria-label="목차" class="lesson-nav"><a href="#orientation">학습 목표 · 오리엔테이션</a> · <a href="#concept">중요 개념 · 번역에 쓰는 토큰과 두 입력</a> · <a href="#why">왜 번역의 큰 그림을 먼저 볼까요?</a> · <a href="#steps">무엇을 하나요? · 두 입력이 들어가는 곳</a> · <a href="#example">번역 예시 · 다음 조각을 고르면</a> · <a href="#model">원논문의 Transformer와 전체 학습 지도</a> · <a href="#schedule">교시별 시간표</a></nav><p>Transformer 오리엔테이션</p>
+<h2 id="orientation">학습 목표 · 오리엔테이션</h2><p>번역 예시를 보며 <strong>원문은 어디로 들어가고, 영어 번역은 어떻게 이어지는지</strong> 살펴봅니다. 수업을 마칠 때는 두 입력이 각각 어디로 들어가고, 다음 조각을 고른 뒤 무엇을 하는지 설명할 수 있으면 됩니다.</p>
+<h2 id="concept">중요 개념 · 번역에 쓰는 토큰과 두 입력</h2><p>모델이 문장을 읽고 쓸 때 사용하는 조각을 <strong>토큰</strong>이라고 합니다. 토큰은 단어 하나일 수도 있고 단어의 일부일 수도 있습니다.</p>
+<div class="panel"><strong>원문</strong> · 나는 매일 커피를 마신다<br/><strong>지금까지 만든 번역</strong> · I drink coffee<br/><strong>다음 단계</strong> · <code>I drink coffee</code> 뒤에 올 토큰 고르기</div>
+<p><strong>원문</strong>은 번역하기 전에 읽는 문장입니다. <strong>타깃</strong>은 번역해 만들려는 쪽입니다. 이 예에서는 영어가 타깃입니다. <strong>타깃 입력</strong>은 완성된 영어 문장 전체가 아니라, <code>&lt;BOS&gt;</code>와 지금까지 만든 영어입니다.</p><p><code>&lt;BOS&gt;</code>는 문장의 <strong>시작을 알리는 입력 기호</strong>입니다. 영어를 한 단어도 쓰기 전에는 이 기호부터 디코더에 넣습니다.</p>
+<h2 id="why">왜 번역의 큰 그림을 먼저 볼까요?</h2><p>원문을 읽는 일과 번역을 한 조각씩 이어 쓰는 일을 먼저 구분하면, 다음 교시부터 배우는 계산이 어느 쪽에서 무엇을 돕는지 찾을 수 있습니다.</p><h2 id="steps">무엇을 하나요? · 두 입력이 들어가는 곳</h2>
+<figure class="input-figure"><figcaption><strong>그림 1 · 한국어를 읽는 쪽과 영어를 이어 쓰는 쪽</strong></figcaption>
+<div class="flow"><div class="box">한국어 원문<br/>나는 매일 커피를 마신다</div><span aria-label="들어감">→</span><div class="box"><strong>인코더(Encoder)</strong><br/>원문을 읽고 정보를 정리합니다.</div></div>
+<div class="flow input-transfer"><div class="transfer-track"><span aria-hidden="true" class="transfer-arrow"></span><span>정리한 원문 정보</span></div></div>
+<div class="flow"><div class="box">타깃 입력<br/><code>&lt;BOS&gt; I drink coffee</code></div><span aria-label="들어감">→</span><div class="box"><strong>디코더(Decoder)</strong><br/>영어 번역을 이어 씁니다.</div></div>
+</figure>
+<p>그림 1에서 디코더로 들어오는 두 정보를 확인해 보세요. 하나는 타깃 입력인 <code>&lt;BOS&gt; I drink coffee</code>이고, 다른 하나는 인코더가 정리한 원문 정보입니다. 이 정보는 원문의 뜻과 문맥을 영어로 옮기는 데 쓰입니다. 디코더가 두 정보를 참고해 다음 토큰을 고르는 과정은 <a href="#next-token">그림 2</a>에서 이어집니다.</p>
+<section class="repeat-section" id="next-token"><h2 id="example">번역 예시 · 다음 조각을 고르면</h2>
+<ol><li>디코더가 다음 토큰을 하나 고릅니다.</li><li>그 토큰을 지금까지 만든 영어 끝에 붙입니다.</li><li>번역을 계속할 때는 토큰을 붙인 문장을 다음 입력으로 사용합니다. 모델이 <code>&lt;EOS&gt;</code>를 고르면 번역을 마칩니다.</li></ol>
+<p><code>&lt;EOS&gt;</code>는 <strong>모델이 선택할 수 있는 종료 기호</strong>입니다. 이 기호를 고르면 영어 번역문에 붙이지 않고 멈춥니다.</p><p>수업의 한국어 토큰은 원논문 §3(PDF 2쪽)의 입력 x₁, x₂, …에, 한 조각씩 고르는 영어 토큰은 출력 y₁, y₂, …에 해당합니다. &lt;BOS&gt;·&lt;EOS&gt;는 이 예제에서 시작과 종료를 표시하는 기호입니다.</p><figure aria-labelledby="repeat-caption" class="repeat-flow">
+<figcaption id="repeat-caption"><strong>그림 2 · 다음 토큰을 고른 뒤 번역을 이어 가는 과정</strong></figcaption>
+<div aria-label="종료 기호를 골랐으면 번역을 마칩니다. 그 외에는 토큰을 붙이고 디코더 입력으로 돌아갑니다." class="token-chart" role="group">
+<div class="chart-node chart-input"><strong>디코더에 입력하기</strong><br/><code>&lt;BOS&gt; I drink coffee</code></div>
+<div aria-hidden="true" class="chart-line chart-down chart-first"></div>
+<div class="chart-node chart-pick"><strong>다음 토큰 고르기</strong><br/>원문 정보를 함께 참고합니다.</div>
+<div aria-hidden="true" class="chart-line chart-down chart-second"></div>
+<div class="chart-decision"><strong>고른 토큰이<br/><code>&lt;EOS&gt;</code>인가요?</strong></div>
+<div aria-hidden="true" class="chart-line chart-stem"></div>
+<div aria-hidden="true" class="chart-split"></div>
+<div aria-hidden="true" class="chart-line chart-down chart-no-line"></div>
+<div aria-hidden="true" class="chart-line chart-down chart-yes-line"></div>
+<strong class="chart-label chart-no-label">아니요</strong>
+<strong class="chart-label chart-yes-label">예</strong>
+<div class="chart-node chart-continue"><strong>번역 이어 쓰기</strong><br/>고른 토큰을 문장 끝에 붙입니다.</div>
+<div class="chart-node chart-stop"><strong>번역 마치기</strong><br/><code>&lt;EOS&gt;</code>는 붙이지 않습니다.</div>
+<div aria-hidden="true" class="chart-loop"></div>
+<span class="chart-loop-label">이어 쓴 문장으로<br/>다시 입력</span>
+</div>
+</figure><p>예를 들어 문장에 붙일 토큰을 골랐다면, 다음 입력은 <code>&lt;BOS&gt; I drink coffee [고른 토큰]</code>입니다. 대괄호 부분에는 모델이 고른 실제 토큰이 들어갑니다.</p></section>
+<h2>번역 흐름 정리</h2><p><strong>말로 확인해 봅시다.</strong> 원문은 어디로 들어가나요? <code>&lt;EOS&gt;</code> 대신 문장에 붙일 토큰을 골랐다면, 다음 입력에는 무엇이 들어가나요?</p><p>인코더는 한국어 원문을 읽고, 디코더는 원문 정보와 지금까지 만든 영어를 참고해 다음 토큰을 고릅니다. 고른 토큰을 영어 문장 끝에 붙여 다음 입력으로 쓰고, <code>&lt;EOS&gt;</code>를 고르면 번역을 마칩니다.</p>
+<p>2교시부터는 가이드북을 화면에서 읽고, 종이 워크시트에 직접 적거나 계산한 뒤, 화면으로 풀이를 확인합니다. 계산에 필요한 용어는 <a href="../01-14교시_수학기초_부록.html">수학 기초 부록</a>에서 찾아볼 수 있습니다.</p><h2 class="course-timetable" id="schedule">교시별 시간표</h2>
+<h3>1일차 · 10:00 ~ 17:50</h3>
+<table><thead><tr><th>교시</th><th>시간</th><th>내용</th></tr></thead><tbody><tr><td>1</td><td>10:00–10:50</td><td>오리엔테이션 · 번역의 큰 그림</td></tr><tr><td>2</td><td>11:00–11:50</td><td>토큰화 · 임베딩</td></tr><tr><td>—</td><td>12:00–13:00</td><td>점심</td></tr><tr><td>3</td><td>13:00–13:50</td><td>위치인코딩</td></tr><tr><td>4</td><td>14:00–14:50</td><td>Q·K·V 만들기 · Head 나누기</td></tr><tr><td>5</td><td>15:00–15:50</td><td>점수표 만들기 (QKᵀ · Scale)</td></tr><tr><td>6</td><td>16:00–16:50</td><td>점수를 비율로 (Softmax)</td></tr><tr><td>7</td><td>17:00–17:50</td><td>본문을 섞고 합치기 (AV · Head 합치기)</td></tr></tbody></table>
+<h3>2일차 · 09:00 ~ 16:50</h3>
+<table><thead><tr><th>교시</th><th>시간</th><th>내용</th></tr></thead><tbody><tr><td>8</td><td>09:00–09:50</td><td>Encoder 완성 (잔차 · 정규화 · FFN)</td></tr><tr><td>9</td><td>10:00–10:50</td><td>뒤를 가린다 (Causal Masking)</td></tr><tr><td>10</td><td>11:00–11:50</td><td>원문을 본다 (Cross-Attention)</td></tr><tr><td>—</td><td>12:00–13:00</td><td>점심</td></tr><tr><td>11</td><td>13:00–13:50</td><td>어순이 교차한다</td></tr><tr><td>12</td><td>14:00–14:50</td><td>단어를 만들어 낸다 (LM Head)</td></tr><tr><td>13</td><td>15:00–15:50</td><td>반복하고 덜어낸다 (자기회귀 · 절제 실험)</td></tr><tr><td>14</td><td>16:00–16:50</td><td>입력부터 다음 토큰까지 (과정 정리)</td></tr></tbody></table>
+<h2>수업 진행 방식과 준비물</h2><p>첫 시간은 번역 그림을 함께 읽습니다. 2교시부터는 화면의 가이드북으로 예제를 따라간 뒤, 학생용 워크시트 인쇄물에 직접 풉니다. 실습을 마치면 정답지를 화면에 띄워 풀이를 확인합니다.</p><p>워크시트와 필기구를 준비하세요. 각을 계산할 때는 라디안 모드를 지원하는 계산기를 사용합니다. 색연필을 쓰는 활동의 표시 방법은 해당 교시 자료에서 안내합니다.</p><p>지금 본 번역 과정의 각 부분을 언제 배우는지 <a href="#learning-section">그림 3</a>에서 확인해 봅시다.</p><section class="learning-section" id="learning-section"><h2 id="model">원논문의 Transformer와 전체 학습 지도</h2><p>Transformer 원논문 <strong>그림 1 · The Transformer — model architecture</strong> (PDF <a href="https://arxiv.org/pdf/1706.03762#page=3">3쪽</a> <a href="../1706.03762v7-page-3.pdf">[오프라인 3쪽]</a>) · 그림에서 왼쪽 인코더와 오른쪽 디코더를 찾아 수업의 학습 지도와 비교해 보세요.</p>
+<p>그림 1·2에서 본 번역 흐름을 수업 순서와 연결해 봅시다. 왼쪽은 원문을 읽는 인코더, 오른쪽은 번역을 이어 쓰는 디코더입니다. 상자에 적힌 번호는 그 부분을 배우는 교시입니다. 왼쪽에서 오른쪽으로 넘어가는 화살표는 원문 정보의 이동이고, 오른쪽 바깥의 화살표는 그림 2처럼 번역을 이어 쓴 뒤 입력으로 돌아가는 길입니다.</p>
+<figure aria-labelledby="learning-caption" class="learning-map">
+<figcaption id="learning-caption"><strong>그림 3 · Transformer 구조로 보는 교시별 학습 지도</strong></figcaption>
+<div class="learning-band"><strong>1교시 · 번역의 큰 그림</strong><br/>두 입력과 다음 토큰을 골라 붙이는 흐름을 살펴봅니다.</div>
+<div class="learning-grid">
+<div class="map-card map-src"><strong>원문 입력</strong><br/>나는 매일 커피를 마신다</div>
+<div class="map-card map-tgt"><strong>타깃 입력</strong><br/><code>&lt;BOS&gt; I drink coffee</code></div>
+<div class="map-card map-prep"><strong>입력 준비 · 2~3교시</strong><br/>2교시 문장을 토큰으로 나누고 숫자로 바꾸기<br/>3교시 토큰의 위치를 숫자로 나타내기</div>
+<div aria-hidden="true" class="map-down map-src">↓</div><div aria-hidden="true" class="map-down map-tgt">↓</div>
+<div class="map-card map-encoder"><strong>인코더 · 8교시</strong><br/>원문을 읽고 정보를 정리합니다.</div>
+<div class="map-transfer"><span>원문 정보</span><span aria-hidden="true" class="map-transfer-arrow">→</span></div>
+<div class="map-card map-decoder"><strong>디코더 · 9~11교시</strong><br/>9교시 지금까지 쓴 영어만 참고하기<br/>10교시 인코더의 원문 정보 참고하기<br/>11교시 영어 표현이 원문의 어디와 연결되는지 살펴보기</div>
+<div aria-hidden="true" class="map-down map-tgt">↓</div>
+<div class="map-card map-tgt"><strong>다음 토큰 고르기 · 12교시</strong><br/>어떤 토큰을 고를지 점수와 확률을 계산합니다.</div>
+<div aria-hidden="true" class="map-down map-tgt">↓</div>
+<div class="map-card map-tgt"><strong>붙이고 반복하기 · 13교시</strong><br/>고른 토큰을 붙인 문장을 디코더의 다음 입력으로 씁니다.</div>
+<div aria-label="13교시의 출력에서 타깃 입력으로 돌아가는 화살표" class="map-return" role="img"></div>
+</div>
+<div class="learning-band"><strong>인코더와 디코더에 공통으로 쓰이는 계산 · 4~7교시</strong>
+<ol class="map-calculations" start="4">
+<li><strong>4교시</strong> · 찾을 내용(Q), 비교할 단서(K), 가져올 정보(V) 만들기 · 여러 관점(헤드)으로 나누기</li>
+<li><strong>5교시</strong> · Q와 K를 비교해 얼마나 관련 있는지 점수 매기고 크기 조정하기</li>
+<li><strong>6교시</strong> · Softmax로 점수를 참고 비율로 바꾸기</li>
+<li><strong>7교시</strong> · 참고 비율에 따라 V를 섞고, 여러 헤드의 결과 합치기</li>
+</ol></div>
+<div class="learning-band"><strong>전체 구조 다시 보기 · 14교시</strong><br/>앞에서 배운 계산을 한 장의 구조와 연결해 정리합니다.</div>
+</figure>
+<p>다음 시간에는 토큰과 위치를 숫자로 바꿉니다. <a href="../02교시/2교시_가이드북.html">2교시 가이드북 열기</a></p></section></main></body></html>

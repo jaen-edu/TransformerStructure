@@ -1,0 +1,210 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>위치 인코딩 부록</title><style>
+body{font:17px/1.55 "Malgun Gothic",sans-serif;color:#172d43;max-width:850px;margin:30px auto;padding:0 20px}h1,h2,h3{line-height:1.3}h1{margin:.2em 0 .4em}h2{border-bottom:1px solid #b9c6d1;padding-bottom:.23em;margin:1.15em 0 .35em}h3,p{margin:.55em 0}nav a{margin-right:.8em}a{color:#174a72}.panel{padding:.45em .7em;background:#eef3f7;border-radius:5px}table{border-collapse:collapse;width:100%;margin:.5em 0}th,td{border:1px solid #9aaabb;padding:.28em .45em;text-align:center}thead th{background:#eef3f7}caption{text-align:left;font-weight:700;margin-bottom:.25em}li{margin:.25em 0}
+@page{size:A4;margin:15mm}@media print{body{margin:0;padding:0;font-size:11pt;line-height:1.4;print-color-adjust:exact}nav{display:none}h1,h2,h3,caption{break-after:avoid}tr{break-inside:avoid}#calculate,#further{break-before:page}}
+
+.unit-circle{margin:.7em 0;break-inside:avoid}.unit-circle svg{display:block;width:min(100%,590px);height:auto;margin:auto}.unit-circle figcaption{font-size:.91em;margin-top:.2em}.rotation-steps{padding-left:1.45em;margin:.55em 0}
+@media print{#rotation{break-before:page}.unit-circle svg{width:135mm}.unit-circle figcaption{line-height:1.3}}
+
+.rotation-parts{margin:.5em 0;break-inside:avoid}.rotation-parts svg{display:block;width:min(100%,690px);height:auto;margin:auto}.rotation-parts figcaption{font-size:.91em}
+.rotation-steps{list-style:none;padding-left:0}
+@media print{#calculate{line-height:1.29}#calculate p,#calculate h3{margin:.45em 0}.rotation-parts svg{width:164mm}.rotation-parts figcaption{line-height:1.3}.unit-circle svg{width:124mm}}
+@media print{#rotation-horizontal{break-before:page}}
+.rotation-compare th:first-child{width:28%} @media print{#rotation-compare{break-inside:avoid}}
+
+.rotation-example-layout{display:grid;grid-template-columns:minmax(0,35fr) minmax(0,65fr);gap:1em;align-items:start}
+.rotation-example{margin:0}.rotation-example svg{display:block;width:100%;max-width:260px;margin:auto}
+.rotation-example figcaption{font-size:.9em;text-align:center}
+.example-point-p{color:#275b84}.example-point-q{color:#9a431d}
+.rotation-example-layout table{margin-top:0}
+@media screen and (max-width:660px){.rotation-example-layout{grid-template-columns:1fr}}
+@media print{#rotation-compare{break-before:page} .rotation-example-layout{gap:3mm}.rotation-example-layout table{font-size:10pt}.rotation-example-layout th,.rotation-example-layout td{padding:.25em}}
+</style></head><body><main><h1>위치 인코딩 더 알아보기</h1>
+<p>2교시에는 위치 숫자를 표에서 찾아 사용합니다. 3교시에는 그 숫자가 어디서 나오는지 확인합니다.</p>
+<nav aria-label="목차"><a href="#lookup">2교시 · 표에서 찾기</a><a href="#calculate">3교시 · 식으로 구하기</a><a href="#rotation-horizontal">회전 검산 · 가로 좌표</a><a href="#rotation-compare">두 좌표 검산</a><a href="#further">더 읽기</a></nav>
+<section id="lookup"><h2>2교시 · 왜 위치 정보를 더하나요?</h2>
+<p>같은 토큰은 어느 자리에 있어도 참조표 A에서 같은 임베딩을 가져옵니다. 문장 안에서의 자리도 나타내기 위해, 참조표 B에서 그 자리에 해당하는 <strong>위치 인코딩(PE)</strong>을 찾아 더합니다.</p>
+<ul><li><strong>pos</strong>는 토큰의 자리 번호입니다. 첫 자리는 0번입니다.</li><li><strong>d0~d3</strong>는 한 행벡터 안의 네 성분을 가리킵니다. PE 한 행의 크기는 1×4입니다.</li><li><strong>성분별 덧셈</strong>은 d0끼리, d1끼리 더하는 방식입니다. 실습에서는 <code>X = E + PE</code>입니다.</li></ul>
+<table><caption>2교시 워크시트 1쪽의 참조표 B · 위치 0~5</caption><thead><tr><th scope="col">pos</th><th scope="col">d0</th><th scope="col">d1</th><th scope="col">d2</th><th scope="col">d3</th></tr></thead><tbody><tr><th scope="row">0</th><td>0.00</td><td>1.00</td><td>0.00</td><td>1.00</td></tr><tr><th scope="row">1</th><td>0.84</td><td>0.54</td><td>0.01</td><td>1.00</td></tr><tr><th scope="row">2</th><td>0.91</td><td>-0.42</td><td>0.02</td><td>1.00</td></tr><tr><th scope="row">3</th><td>0.14</td><td>-0.99</td><td>0.03</td><td>1.00</td></tr><tr><th scope="row">4</th><td>-0.76</td><td>-0.65</td><td>0.04</td><td>1.00</td></tr><tr><th scope="row">5</th><td>-0.96</td><td>0.28</td><td>0.05</td><td>1.00</td></tr></tbody></table><p>이 예문의 토큰은 네 개이므로 실습에는 위치 0~3번 행을 사용합니다. 4·5번 행은 더 긴 문장을 위한 참고값입니다.</p>
+<h3>다른 숫자로 연습하기</h3>
+<p>어떤 토큰의 임베딩이 [0.20, −0.30, 0.40, 0.10]이고, 이 토큰이 0번 자리에 있다고 가정합니다. 표에서 0번 행 [0.00, 1.00, 0.00, 1.00]을 찾아 더합니다.</p>
+<p class="panel">[0.20, −0.30, 0.40, 0.10] + [0.00, 1.00, 0.00, 1.00]<br>= [0.20, 0.70, 0.40, 1.10]</p>
+<p>같은 토큰이 1번 자리로 옮겨가면 임베딩 행벡터는 그대로 사용하고, PE는 표의 1번 행에서 다시 찾습니다. 예를 들어 d1만 보면, 이전에는 −0.30 + 1.00 = 0.70, 옮긴 뒤에는 −0.30 + 0.54 = 0.24입니다.</p>
+<p>워크시트에서는 주어진 PE 값을 그대로 더합니다. 위치별 숫자를 직접 계산하는 방법은 다음 절에서 확인할 수 있습니다.</p></section>
+<section id="calculate"><h2>3교시 · 위치를 각으로 바꿔 숫자 구하기</h2>
+<p>폭이 4인 실습에서는 성분을 두 쌍으로 묶습니다. <strong>i</strong>는 쌍 번호입니다. i=0은 d0·d1, i=1은 d2·d3입니다. 각 쌍의 첫 성분에는 사인(sin), 둘째에는 코사인(cos)을 씁니다.</p>
+<p class="panel">지수 = 2 × i ÷ 4 → 분모 = 10000<sup>지수</sup> → 각 = pos ÷ 분모<br>계산기는 라디안(RAD) 모드로 맞춥니다.</p>
+<p><strong>예시 · pos=1, i=1</strong>　지수는 0.5, 분모는 10000의 제곱근인 100입니다. 각은 0.01 rad이고, sin(0.01)≈0.0100, cos(0.01)≈0.99995입니다. 소수 둘째 자리로 표시하면 d2는 0.01, d3는 1.00입니다.</p>
+<h3>첫 번째 쌍은 왜 한 자리마다 1 rad 늘어나나요?</h3>
+<p>첫 번째 쌍은 d0·d1이므로 쌍 번호 <strong>i=0</strong>입니다. 식에 넣으면 지수는 <code>2 × 0 ÷ 4 = 0</code>, 분모는 <code>10000⁰ = 1</code>입니다. 따라서 각은 <strong>pos ÷ 1</strong>입니다. 위치 2의 각은 2 rad, 위치 3의 각은 3 rad이므로 한 자리 뒤로 가면 <strong>3 − 2 = 1 rad</strong> 늘어납니다. rad(라디안)는 각도의 단위로, 1 rad는 약 57.3°입니다. 여기서 도는 것은 계산에 쓰는 원 위의 점입니다.</p>
+<p>두 번째 쌍 d2·d3은 분모가 100입니다. 그래서 위치가 1 늘 때 각은 <strong>0.01 rad</strong>만 늘어납니다. 아래의 검산은 첫 번째 쌍에 적용합니다.</p>
+<h3 id="rotation">단위원에서 한 자리 이동 따라가기</h3>
+<figure class="unit-circle">
+<svg viewBox="0 0 455 204" role="img" aria-labelledby="circle-title circle-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="circle-title">한 자리 이동 전후의 단위원 좌표</title>
+<desc id="circle-desc">이동 전 점 P의 각은 a이고 좌표는 코사인 a, 사인 a입니다. 반시계 방향으로 1 라디안 돌린 점 Q의 각은 a+1이고 좌표는 코사인 a+1, 사인 a+1입니다. 점선은 두 점의 좌표를 축에 연결합니다.</desc>
+<defs><marker id="arc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#172d43"/></marker></defs>
+<circle cx="115" cy="103" r="78" fill="white" stroke="#8593a0"/>
+<path d="M22 103H210 M115 15V190" stroke="#637282"/>
+<g fill="#172d43" font-size="12"><text x="213" y="108">가로</text><text x="91" y="16">세로</text><text x="101" y="119">0</text></g>
+<g fill="none" stroke-width="1.25">
+<path d="M115 72.63H186.84V103" stroke="#275b84" stroke-dasharray="5 3"/>
+<path d="M115 26.13H128.26V103" stroke="#9a431d" stroke-dasharray="2 3"/>
+<path d="M115 103L186.84 72.63" stroke="#275b84" stroke-width="2"/>
+<path d="M115 103L128.26 26.13" stroke="#9a431d" stroke-width="2"/>
+<path d="M 150.00 103.00 A 35 35 0 0 0 147.24 89.37" stroke="#275b84"/>
+<path d="M 169.00 103.00 A 54 54 0 0 0 124.18 49.79" stroke="#9a431d"/>
+<path d="M 198.33 61.71 A 93 93 0 0 0 139.88 13.39" stroke="#172d43" stroke-width="1.7" marker-end="url(#arc-arrow)"/>
+</g>
+<circle cx="186.84" cy="72.63" r="4" fill="#275b84"/>
+<rect x="124.76" y="22.63" width="7" height="7" fill="#9a431d"/>
+<g font-size="13" font-weight="700"><text x="148" y="101" fill="#275b84">a</text><text x="132" y="62" fill="#9a431d">a+1</text><text x="197" y="77" fill="#275b84">P</text><text x="113" y="35" fill="#9a431d">Q</text><text x="182" y="30" fill="#172d43">+1 rad</text></g>
+<g font-size="14" fill="#172d43">
+<circle cx="251" cy="48" r="4" fill="#275b84"/><text x="263" y="53" font-weight="700">P · 이동 전 (각 a)</text>
+<text x="263" y="74">가로 d1 = cos(a)</text><text x="263" y="94">세로 d0 = sin(a)</text>
+<rect x="247.5" y="113.5" width="7" height="7" fill="#9a431d"/><text x="263" y="122" font-weight="700">Q · 한 자리 뒤 (각 a+1)</text>
+<text x="263" y="143">가로 d1 = cos(a+1)</text><text x="263" y="163">세로 d0 = sin(a+1)</text>
+</g></svg>
+<figcaption>단위원은 반지름이 1인 원입니다. 이 그림은 첫 번째 성분 쌍 d0·d1에서 한 자리 이동하는 예입니다. 점선으로 각 점의 가로·세로 좌표를 축까지 따라가 보세요. 각의 단위는 rad입니다.</figcaption>
+</figure>
+<h3>사인 덧셈정리로 다음 d0 확인하기</h3>
+<p>P에서 Q로 반시계 방향으로 1 rad 돌리면 두 좌표가 모두 바뀝니다. 다음 d0을 확인하려면 Q의 세로 좌표 <strong>sin(a+1)</strong>을 구하면 됩니다. P를 가로 성분과 세로 성분으로 나누어 각각 1 rad 돌린다고 생각해 보세요.</p>
+
+<figure class="rotation-parts">
+<svg viewBox="0 0 545 146" role="img" aria-labelledby="parts-title parts-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="parts-title">두 성분을 1 rad 회전한 뒤 세로 방향의 길이 더하기</title>
+<desc id="parts-desc">① 가로 성분을 돌린 끝점의 높이는 cos(a) 곱하기 sin(1)입니다. ② 세로 성분을 돌린 끝점의 높이는 sin(a) 곱하기 cos(1)입니다. 오른쪽에서 ① 위에 ②를 쌓으면 바닥에서 맨 위까지의 높이가 Q의 세로 좌표입니다.</desc>
+<defs><marker id="parts-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#425466"/></marker></defs>
+<g fill="#172d43" font-size="15" font-weight="700">
+<text x="12" y="18">가로 성분 돌리기</text><text x="170" y="18">세로 성분 돌리기</text><text x="330" y="18">두 세로 길이 더하기</text></g>
+<g stroke="#bbc4cd" fill="none">
+<path d="M12 102H145 M170 102H298 M327 102H518"/>
+<path d="M32 102h64.47 M223 102v-27.26" stroke="#6c7782" stroke-dasharray="4 3" stroke-width="1.6"/>
+</g>
+<g stroke="#425466" fill="none" stroke-width="1.4" marker-end="url(#parts-arrow)">
+<path d="M54 102 A22 22 0 0 0 43.89 83.49"/>
+<path d="M223 86 A16 16 0 0 0 209.54 93.36"/>
+</g>
+<g fill="#425466" font-size="12"><text x="66" y="86">1 rad</text><text x="178" y="72">1 rad</text></g>
+<g stroke="#275b84" fill="none" stroke-width="2"><path d="M32 102L66.84 47.75"/><path d="M66.84 47.75H112" stroke-dasharray="4 3"/><path d="M112 47.75V102 m-4 0h8 M108 47.75h8"/></g>
+<g stroke="#9a431d" fill="none" stroke-width="2"><path d="M223 102L200.06 87.27"/><path d="M200.06 87.27H263" stroke-dasharray="4 3"/><path d="M263 87.27V102 m-4 0h8 M259 87.27h8"/></g>
+<path d="M354 102V47.75" stroke="#275b84" stroke-width="5"/>
+<path d="M354 47.75V33.02" stroke="#9a431d" stroke-width="5"/>
+<path d="M345 33.02H500 M345 47.75h18" stroke="#637282" stroke-dasharray="3 3"/>
+<path d="M496 33.02h8 m-4 0V102 m-4 0h8" stroke="#172d43" fill="none" stroke-width="1.5"/>
+<g font-size="14" font-weight="700">
+<text x="118" y="77" fill="#275b84">①</text><text x="270" y="97" fill="#9a431d">②</text>
+<text x="366" y="85" fill="#275b84">①</text><text x="366" y="43" fill="#9a431d">②</text><text x="405" y="72" fill="#172d43">Q의 d0</text>
+<text x="12" y="128" fill="#275b84">① cos(a) × sin(1)</text><text x="170" y="128" fill="#9a431d">② sin(a) × cos(1)</text><text x="330" y="128" fill="#172d43">① + ② = sin(a+1)</text>
+</g></svg>
+<figcaption>사선은 회전한 성분입니다. 사선 끝에서 점선을 따라가면 세로 길이 ①·②를 읽을 수 있습니다. 오른쪽에서는 같은 두 길이를 아래에서부터 차례로 쌓았습니다.</figcaption>
+</figure>
+<ol class="rotation-steps">
+<li><strong>① P의 가로 성분 cos(a)</strong>는 회전하면 위쪽으로 기울어집니다. 가로축과 1 rad를 이루므로 길이에 sin(1)을 곱한 <strong>cos(a) × sin(1)</strong>만큼 위로 올라갑니다.</li>
+<li><strong>② P의 세로 성분 sin(a)</strong>는 회전하면 왼쪽으로 기울어집니다. 세로축과 1 rad를 이루므로 길이에 cos(1)을 곱한 <strong>sin(a) × cos(1)</strong>만큼 위쪽에 남습니다.</li>
+</ol>
+<div class="panel"><strong>①과 ②를 더하면 Q의 세로 좌표</strong><br>
+sin(a+1) = sin(a) × cos(1) + cos(a) × sin(1)<br>
+다음 d0 ≈ 현재 d0 × 0.54 + 현재 d1 × 0.84
+</div>
+<p>그림에서는 ①과 ②가 모두 위쪽입니다. 아래쪽을 향하는 성분은 음수로 더합니다. 0.54와 0.84는 각각 cos(1)과 sin(1)을 반올림한 값입니다.</p>
+<p class="panel"><strong>0번 → 1번 예시</strong><br>0번 행의 d0은 0.00, d1은 1.00입니다.<br>다음 d0 ≈ 0.54 × 0.00 + 0.84 × 1.00 = <strong>0.84</strong><br>참조표의 1번 행 d0과 비교하면 같은 값이 나옵니다.</p><p>2번에서 3번으로 이동하는 예는 다음 절의 <a href="#rotation-compare">두 좌표 검산 표</a>에서 함께 확인할 수 있습니다.</p>
+<p>매번 참조표에서 출발 행의 값을 다시 읽으세요. 곱과 합은 중간에 반올림하지 않고, 최종값만 소수 둘째 자리로 반올림합니다. 표와 계수를 이미 반올림했으므로 이 검산은 근사 계산입니다.</p>
+<h3 id="rotation-horizontal">코사인 덧셈정리로 다음 d1 확인하기</h3>
+<p>이번에는 Q의 <strong>가로 좌표 d1</strong>을 구해 봅시다. 앞 그림에서 세로 길이를 읽었던 두 성분을 그대로 사용합니다. 이번에는 각 성분을 1 rad 돌린 뒤 <strong>가로로 어느 쪽에 얼마나 갔는지</strong> 읽습니다.</p>
+
+<figure class="rotation-parts horizontal-parts">
+<svg viewBox="0 0 560 210" role="img" aria-labelledby="horizontal-title horizontal-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="horizontal-title">두 성분을 1 rad 돌린 뒤 가로 방향의 이동 더하기</title>
+<desc id="horizontal-desc">① 기존 가로 성분을 돌리면 코사인 a 곱하기 코사인 1만큼 오른쪽으로 이동합니다. ② 기존 세로 성분을 돌리면 사인 a 곱하기 사인 1만큼 왼쪽으로 이동합니다. 0에서 오른쪽으로 이동한 뒤 왼쪽으로 되돌아오면 Q의 가로 좌표에 도착합니다.</desc>
+<defs><marker id="horizontal-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#172d43"/></marker></defs>
+<g fill="#172d43" font-size="15" font-weight="700">
+<text x="12" y="19">가로 성분 돌리기</text><text x="190" y="19">세로 성분 돌리기</text><text x="378" y="19">두 가로 이동 더하기</text></g>
+<g stroke="#9aa7b3" fill="none">
+<path d="M13 132H150 M190 132H324 M380 132H540"/>
+<path d="M25 132h105.00 M267 132v-44.39" stroke="#687786" stroke-dasharray="4 3" stroke-width="1.5"/>
+</g>
+<g stroke="#172d43" fill="none" stroke-width="1.4" marker-end="url(#horizontal-arrow)">
+<path d="M48 132 A23 23 0 0 0 37.43 112.65"/>
+<path d="M267 106 A26 26 0 0 0 245.12 117.95"/>
+</g>
+<g fill="#172d43" font-size="12"><text x="61" y="112">1 rad</text><text x="214" y="101">1 rad</text></g>
+<g fill="none" stroke-width="2">
+<path d="M25 132L81.73 43.64" stroke="#275b84"/>
+<path d="M267 132L229.64 108.01" stroke="#9a431d"/>
+<path d="M81.73 43.64V156 M25 132v24" stroke="#275b84" stroke-dasharray="4 3"/>
+<path d="M229.64 108.01V156 M267 132v24" stroke="#9a431d" stroke-dasharray="4 3"/>
+<path d="M25 156H81.73 M406 68H462.73" stroke="#275b84" marker-end="url(#horizontal-arrow)"/>
+<path d="M267 156H229.64 M462.73 101H425.38" stroke="#9a431d" marker-end="url(#horizontal-arrow)"/>
+<path d="M406 68V132 M462.73 68V101 M425.38 101V132" stroke="#687786" stroke-dasharray="3 3"/>
+</g>
+<circle cx="406" cy="132" r="3" fill="#172d43"/><rect x="422.38" y="129" width="6" height="6" fill="#172d43"/>
+<g font-size="13" font-weight="700">
+<text x="467" y="73" fill="#275b84">① 오른쪽</text><text x="467" y="106" fill="#9a431d">② 왼쪽</text>
+<text x="402" y="151" fill="#172d43">0</text><text x="429" y="151" fill="#172d43">Q의 d1</text>
+<text x="12" y="181" fill="#275b84">① +cos(a) × cos(1)</text><text x="190" y="181" fill="#9a431d">② −sin(a) × sin(1)</text>
+<text x="378" y="181" fill="#172d43">① + ② = cos(a+1)</text>
+</g></svg>
+<figcaption>앞의 단위원과 같은 각을 그렸습니다. 왼쪽 두 그림에서 사선 끝을 점선을 따라 가로축에 옮겨 가로 이동을 읽으세요. 오른쪽 그림의 두 화살표는 같은 이동을 차례로 이어 붙인 것입니다.</figcaption>
+</figure>
+
+<ol class="rotation-steps">
+<li><strong>① 기존 가로 성분 cos(a)</strong>를 돌리면 오른쪽 위를 향합니다. 가로축과 1 rad를 이루므로 가로 이동은 <strong>+cos(a) × cos(1)</strong>입니다.</li>
+<li><strong>② 기존 세로 성분 sin(a)</strong>를 돌리면 왼쪽 위를 향합니다. 세로축과 1 rad를 이루므로 가로로 뻗은 길이는 sin(a) × sin(1)입니다. 왼쪽이므로 가로 이동은 <strong>−sin(a) × sin(1)</strong>입니다.</li>
+</ol>
+<div class="panel"><strong>오른쪽으로 간 만큼에서 왼쪽으로 돌아온 만큼을 뺍니다.</strong><br>
+다음 d1 = cos(a+1) = cos(a) × cos(1) − sin(a) × sin(1)<br>
+다음 d1 ≈ 현재 d1 × 0.54 − 현재 d0 × 0.84
+</div>
+<p>그림에서는 ①이 오른쪽, ②가 왼쪽입니다. 시작 각이 달라지면 성분의 부호도 달라질 수 있습니다. 계산할 때는 현재 d0·d1을 <strong>부호까지 그대로</strong> 넣으세요.</p>
+
+<section id="rotation-compare" aria-labelledby="rotation-compare-title">
+<h3 id="rotation-compare-title">2번 → 3번 · 같은 출발점에서 두 좌표 검산하기</h3>
+<p>2교시 워크시트 <strong>1쪽 참조표 B의 2번 행</strong>에서 가로 d1 = −0.42와 세로 d0 = 0.91을 읽습니다. 이 점의 각은 2 rad입니다. 반시계 방향으로 1 rad 돌려 각이 3 rad가 된 점의 두 좌표를 구해 봅시다.</p>
+<div class="rotation-example-layout">
+<figure class="rotation-example">
+<svg viewBox="0 0 228 219" role="img" aria-labelledby="example-circle-title example-circle-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="example-circle-title">위치 2에서 위치 3으로 이동하는 단위원의 점</title>
+<desc id="example-circle-desc">원 모양 점 P는 2 rad이고 가로 좌표는 −0.42, 세로 좌표는 0.91입니다. 반시계 방향으로 1 rad 돌리면 네모 점 Q로 이동합니다. Q는 3 rad이고 가로 좌표는 −0.99, 세로 좌표는 0.14입니다. Q는 P보다 왼쪽 아래에 있습니다.</desc>
+<defs><marker id="example-arc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#172d43"/></marker></defs>
+<circle cx="115" cy="128" r="74" fill="white" stroke="#8593a0"/>
+<path d="M24 128H199 M115 42V211" stroke="#687786"/>
+<g fill="#172d43" font-size="13"><text x="121" y="43">세로 d0</text><text x="198" y="145" text-anchor="end">가로 d1</text><text x="119" y="143">0</text></g>
+<g fill="none" stroke-width="1.2">
+<path d="M84.21 60.71H115 M84.21 60.71V128" stroke="#275b84" stroke-dasharray="5 3"/>
+<path d="M41.74 117.56H115 M41.74 117.56V128" stroke="#9a431d" stroke-dasharray="2 3"/>
+</g>
+<path d="M115 128L84.21 60.71" stroke="#275b84" stroke-width="1.7"/>
+<path d="M115 128L41.74 117.56" stroke="#9a431d" stroke-width="1.7"/>
+<path d="M76.71 44.34 A92 92 0 0 0 23.92 115.02" stroke="#172d43" stroke-width="1.6" fill="none" marker-end="url(#example-arc-arrow)"/>
+<circle cx="84.21" cy="60.71" r="4" fill="#275b84"/>
+<rect x="38.24" y="114.06" width="7" height="7" fill="#9a431d"/>
+<g font-size="13" font-weight="700">
+<text x="20" y="26" fill="#172d43">반시계 +1 rad</text>
+<text x="82" y="52" fill="#275b84">P</text>
+<text x="38" y="107" fill="#9a431d">Q</text>
+</g></svg>
+<figcaption><strong>단위원 좌표 (cos, sin) = (d1, d0)</strong><br>
+<span class="example-point-p">● P</span> · 2 rad　(−0.42, 0.91)<br>
+<span class="example-point-q">■ Q</span> · 3 rad　(−0.99, 0.14)
+</figcaption>
+</figure>
+<table class="rotation-compare">
+<caption>참조표 B 비교 · PE 첫째 쌍 [sin, cos] = [d0, d1]</caption>
+<thead><tr><th scope="col">비교 단계</th><th scope="col">세로 좌표 d0</th><th scope="col">가로 좌표 d1</th></tr></thead>
+<tbody>
+<tr><th scope="row">출발 · 위치 2</th><td>0.91</td><td>−0.42</td></tr>
+<tr><th scope="row">한 자리 회전 계산</th><td>0.91 × 0.54 + (−0.42) × 0.84<br>= 0.4914 − 0.3528<br>= 0.1386</td><td>(−0.42) × 0.54 − 0.91 × 0.84<br>= −0.2268 − 0.7644<br>= −0.9912</td></tr>
+<tr><th scope="row">반올림 · 소수 둘째 자리</th><td><strong>0.14</strong></td><td><strong>−0.99</strong></td></tr>
+<tr><th scope="row">참조표 B · 3번 행</th><td>0.14 · 일치</td><td>−0.99 · 일치</td></tr>
+</tbody></table></div>
+<p>그림의 점선을 축까지 따라가 보세요. <strong>세로 d0는 0.91 → 0.14</strong>로 작아져 점이 아래로 내려갑니다. <strong>가로 d1은 −0.42 → −0.99</strong>로 더 음수가 되어 점이 왼쪽으로 이동합니다. Q는 여전히 가로축 위에 있습니다. 출발값과 계수가 이미 반올림되어 있으므로, 이 예에서는 최종값을 소수 둘째 자리로 맞춰 비교했습니다.</p>
+</section>
+
+</section>
+<section id="further"><h2>더 읽기 · 위치 표현의 다른 방식</h2>
+<ul><li><strong>한 바퀴 도는 데 걸리는 위치 간격</strong>을 파장이라고 합니다. 이 예시의 두 쌍은 한 자리마다 각각 1 rad와 0.01 rad만큼 움직이므로, 파장은 각각 약 6.28과 628.32입니다. 한 바퀴가 2π rad이므로, 각 쌍의 파장은 2π를 한 자리마다 움직이는 각으로 나누면 됩니다.</li>
+<li><strong>절대 위치와 상대 간격</strong>　이 표는 각 토큰의 절대 위치 pos로 계산합니다. 같은 간격만큼 이동하면 각 쌍에 같은 회전을 적용할 수 있습니다. RoPE는 입력 임베딩에 이 표를 더하는 방식과 달리 어텐션의 Q·K를 위치에 따라 회전시켜, 내적의 위치 의존성이 상대 간격으로 나타나게 합니다.</li>
+<li><strong>학습한 위치 표</strong>　위치별 숫자를 학습하는 방법도 있습니다. 사인·코사인 방식은 식으로 학습 때 보지 못한 위치의 값도 구할 수 있습니다. 원논문의 비교 실험에서는 두 방식의 결과가 비슷했습니다. 그 길이에서 모델이 잘 작동하는지는 별도로 확인해야 합니다.</li></ul>
+<p>참고 자료 · <a href="https://arxiv.org/pdf/1706.03762">Transformer 원논문 §3.5</a> · <a href="https://arxiv.org/abs/2104.09864">RoFormer 원논문</a></p>
+</section></main></body></html>
+
